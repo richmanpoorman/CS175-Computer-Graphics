@@ -9,25 +9,34 @@
 
 class RevolutionSolid : public Shape {
 public:
-	RevolutionSolid(int tesselateX, int tesselateY, Vertex(*surfaceFunction)(int x, int y), Vertex top, Vertex bottom);
-	RevolutionSolid(int tesselateX, int tesselateY, Vertex(*surfaceFunction)(int x, int y), Vertex top, Vertex bottom,
+	RevolutionSolid();
+	RevolutionSolid(Vertex(*surfaceFunction)(int x, int y), Vertex top, Vertex bottom);
+	RevolutionSolid(Vertex(*surfaceFunction)(int x, int y), Vertex top, Vertex bottom,
 					bool shouldMakeNewVerticiesConnectToTop, bool shouldMakeNewVerticiesConnectToBottom);
-	~RevolutionSolid() {};
+	~RevolutionSolid();
 
 	OBJ_TYPE getType() {
-		return SHAPE_SPECIAL1;
-	}
-
-	void draw() {
+		return SHAPE_MESH;
 	};
 
-	void drawNormal() {
-	};
+	void draw();
+
+	void drawNormal();
+
+	void createSurface();
 
 private:
-	glm::vec3 topPoint, bottomPoint; 
-	vector<vector<Vertex>> revolutionSurface;
-	Vertex(*surfaceFunction)(int x, int y);
+	Vertex topPoint, bottomPoint; 
+	std::vector<std::vector<VertexID>> revolutionSurface;
+	bool createNewTopConnect, createNewBottomConnect;
+	Vertex(*parameterizedSurface)(int x, int y); // Function which takes in 2 ints and returns a Vertex
+	Surface surface; 
+	
+	void initialize(Vertex(*surfaceFunction)(int x, int y), 
+				   Vertex top, Vertex bottom,
+				   bool shouldMakeNewVerticiesConnectToTop, bool shouldMakeNewVerticiesConnectToBottom);
+
+	
 };
 
 #endif

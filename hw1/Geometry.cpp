@@ -12,14 +12,16 @@ using namespace std;
  */
 
 // Initializes with (0, 0, 0) with the zero normal
-Vertex::Vertex() { initialize(0, 0, 0, glm::vec3(0, 0, 0)); }
+Vertex::Vertex() { initialize(glm::vec3(0, 0, 0), glm::vec3(0, 0, 0)); }
 // Initializes with the point with the zero normal
-Vertex::Vertex(float x, float y, float z) { initialize(x, y, z, glm::vec3(0, 0, 0)); }
+Vertex::Vertex(float x, float y, float z) { initialize(glm::vec3(x, y, z), glm::vec3(0, 0, 0)); }
 // Initializes with the point with the given vector as a direction
-Vertex::Vertex(float x, float y, float z, glm::vec3 normal) { initialize(x, y, z, normal); }
+Vertex::Vertex(float x, float y, float z, glm::vec3 normal) { initialize(glm::vec3(x, y, z), normal); }
+// Initializes with the given position and direction vector 
+Vertex::Vertex(glm::vec3 position, glm::vec3 normal) { initialize(position, normal); }
 Vertex::~Vertex() {}
-void Vertex::initialize(float x, float y, float z, glm::vec3 normal) {
-	positionVector = glm::vec3(x, y, z);
+void Vertex::initialize(glm::vec3 position, glm::vec3 normal) {
+	positionVector = position;
 	normalVector   = glm::normalize(normal);
 }
 
@@ -52,7 +54,7 @@ void Face::initialize(VertexID vertexIndex1, VertexID vertexIndex2, VertexID ver
 
 vector<int> Face::verticies() { return { vertexIndicies[0], vertexIndicies[1], vertexIndicies[2] }; }
 
-int Face::setVerticies(int newVertexIndicies[3]) {
+void Face::setVerticies(VertexID newVertexIndicies[3]) {
 	for (int i = 0; i < 3; i++)
 		vertexIndicies[i] = newVertexIndicies[i];
 }
@@ -64,12 +66,16 @@ int Face::setVerticies(int newVertexIndicies[3]) {
 Surface::Surface() { nextFaceID = nextVertexID = 1;  }
 Surface::~Surface() {}
 
+Vertex Surface::vertex(VertexID vertexID) {
+	assert(hasVertex(vertexID));
+	return vertexMap[vertexID];
+}
 VertexID Surface::addVertex(Vertex vertex) {
 	VertexID id = nextVertexID++; 
 
 	vertexMap[id] = vertex;
 	vertexInFace[id] = unordered_set<FaceID>();
-
+	vertexList.push_back(vertex);
 	return id; 
 }
 Vertex Surface::removeVertex(VertexID vertexID) {
@@ -82,10 +88,16 @@ Vertex Surface::removeVertex(VertexID vertexID) {
 
 	vertexInFace.erase(vertexID);
 	vertexMap.erase(vertexID);
+	vertexList = vector<Vertex>(); // Erase it all so it can be made again later
 
 	return vertex;
 }
 
+
+Face Surface::face(FaceID faceID) {
+	assert(hasFace(faceID));
+	return faceMap[faceID];
+}
 FaceID Surface::makeFace(VertexID vertex1ID, VertexID vertex2ID, VertexID vertex3ID) {
 	assert(hasVertex(vertex1ID) and hasVertex(vertex2ID) and hasVertex(vertex3ID)); // Makes sure that the verticies are in the dictionary 
 	FaceID faceID = nextFaceID++;
@@ -97,6 +109,7 @@ FaceID Surface::makeFace(VertexID vertex1ID, VertexID vertex2ID, VertexID vertex
 	vertexInFace[vertex3ID].insert(faceID);
 
 	faceMap[faceID] = face;
+	faceList.push_back(face);
 	
 	return faceID;
 }
@@ -110,8 +123,29 @@ Face Surface::removeFace(FaceID faceID) {
 	for (VertexID vertexID : face.verticies())
 		vertexInFace.erase(faceID);
 
+	faceList = vector<Face>(); // Erase it all so it can be made later
+
 	return face;
 }
 
 bool Surface::hasVertex(VertexID vertexID) { return vertexMap.count(vertexID); }
 bool Surface::hasFace(FaceID faceID) { return faceMap.count(faceID); }
+
+vector<Vertex> Surface::verticies() { 
+	if (not vertexList.empty()) return vertexList; 
+
+	vertexList = vector<Vertex>();
+	for (auto mapIterator : vertexMap) {
+		Vertex vertex = mapIterator.second; 
+		vertexList.push_back(vertex);
+	}
+}
+vector<Face> Surface::faces() { 
+	if (not faceList.empty()) return faceList; 
+	
+	faceList = vector<Face>();
+	for (auto mapIterator : faceMap) {
+		Face face = mapIterator.second;
+		faceList.push_back(face);
+	}
+}
