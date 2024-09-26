@@ -2,6 +2,7 @@
 #define CUBE_H
 
 #include "Shape.h"
+#include <Geometry.h>
 
 class Cube : public Shape {
 public:
@@ -12,14 +13,12 @@ public:
 		return SHAPE_CUBE;
 	}
 
-	void draw() {
-	};
-
-
-	void drawNormal() {
-	};
+    void tessellate(int segmentsX, int segmentsY);
+    void draw() override;
+    void drawNormal() override;
 
 private:
+    Surface surface;
 };
 
 #endif
