@@ -1,7 +1,9 @@
 #ifndef SPHERE_H
 #define SPHERE_H
 
-#include "Shape.h"
+#include "Shape.h" 
+#include "RevolutionSolid.h"
+
 
 class Sphere : public Shape {
 public:
@@ -19,6 +21,7 @@ public:
 	};
 
 private:
+	RevolutionSolid s;
 };
 
 #endif
