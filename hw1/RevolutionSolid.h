@@ -12,7 +12,7 @@ public:
 	RevolutionSolid();
 	RevolutionSolid(Vertex(*surfaceFunction)(int x, int y), Vertex top, Vertex bottom);
 	RevolutionSolid(Vertex(*surfaceFunction)(int x, int y), Vertex top, Vertex bottom,
-					bool shouldMakeNewVerticiesConnectToTop, bool shouldMakeNewVerticiesConnectToBottom);
+					bool hasFlatTop, bool hasFlatBottom);
 	~RevolutionSolid();
 
 	OBJ_TYPE getType() {
@@ -28,11 +28,13 @@ public:
 private:
 	Vertex topPoint, bottomPoint; 
 	std::vector<std::vector<VertexID>> revolutionSurface;
-	bool createNewTopConnect, createNewBottomConnect;
+	bool isFlatTop, isFlatBottom;
 	Vertex(*parameterizedSurface)(int x, int y); // Function which takes in 2 ints and returns a Vertex
 	Surface surface; 
+
+	int tesselationX = -1, tesselationY = -1;
 	
-	void initialize(Vertex(*surfaceFunction)(int x, int y), 
+	void initialize(Vertex(*surfaceFunction)(int row, int column), 
 				   Vertex top, Vertex bottom,
 				   bool shouldMakeNewVerticiesConnectToTop, bool shouldMakeNewVerticiesConnectToBottom);
 

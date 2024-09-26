@@ -10,13 +10,15 @@ RevolutionSolid::RevolutionSolid(Vertex(*surfaceFunction)(int x, int y),
 }
 RevolutionSolid::RevolutionSolid(Vertex(*surfaceFunction)(int x, int y),
 								 Vertex top, Vertex bottom,
-								 bool shouldMakeNewVerticiesConnectToTop, bool shouldMakeNewVerticiesConnectToBottom) {
-	initialize(surfaceFunction, top, bottom, shouldMakeNewVerticiesConnectToTop, shouldMakeNewVerticiesConnectToBottom);
+								 bool hasFlatTop, bool hasFlatBottom) {
+	initialize(surfaceFunction, top, bottom, hasFlatTop, hasFlatBottom);
 }
 RevolutionSolid::~RevolutionSolid() {};
 
 void RevolutionSolid::draw() {
-	
+	if (tesselationX != Shape::m_segmentsX or tesselationY != Shape::m_segmentsY)
+		createSurface();
+
 	vector<Vertex> verticies = surface.verticies();
 	glBegin(GL_TRIANGLES);
 	for (Face face : surface.faces()) {
@@ -35,28 +37,33 @@ void RevolutionSolid::draw() {
 }
 
 void RevolutionSolid::drawNormal() {
+	float normalSize = 0.1;
+	if (tesselationX != Shape::m_segmentsX or tesselationY != Shape::m_segmentsY)
+		createSurface();
+
 	vector<Vertex> verticies = surface.verticies();
-	glBegin(GL_SMOOTH);
-	for (Face face : surface.faces()) {
-		for (VertexID vertexID : face.verticies()) {
-			Vertex vertex = surface.vertex(vertexID);
-			glm::vec3 position = vertex.position(), normal = -vertex.normal();
-			glVertex3f(position.x, position.y, position.z);
-			glNormal3f(normal.x, normal.y, normal.z);
-		}
+	glBegin(GL_LINES);
+	for (Vertex vertex : verticies) {
+		glm::vec3 position = vertex.position(),
+			      normal   = vertex.normal();
+
+		glm::vec3 normalEnd   = position + normalSize * normal;
+		glm::vec3 normalStart = position;
+		glVertex3f(normalStart.x, normalStart.y, normalStart.z);
+		glVertex3f(normalEnd.x, normalEnd.y, normalEnd.z);
 	}
 
 	glEnd();
 }
 
-void RevolutionSolid::initialize(Vertex(*surfaceFunction)(int x, int y),
+void RevolutionSolid::initialize(Vertex(*surfaceFunction)(int row, int column),
 								 Vertex top, Vertex bottom,
-								 bool shouldMakeNewVerticiesConnectToTop, bool shouldMakeNewVerticiesConnectToBottom) {
+								 bool hasFlatTop, bool hasFlatBottom) {
 	parameterizedSurface   = surfaceFunction;
 	topPoint               = top;
 	bottomPoint            = bottom; 
-	createNewTopConnect    = shouldMakeNewVerticiesConnectToTop;
-	createNewBottomConnect = shouldMakeNewVerticiesConnectToBottom;
+	isFlatTop              = hasFlatTop;
+	isFlatBottom           = hasFlatBottom;
 	
 	createSurface();
 }
@@ -64,6 +71,8 @@ void RevolutionSolid::initialize(Vertex(*surfaceFunction)(int x, int y),
 void RevolutionSolid::createSurface() {
 	int numRow = Shape::m_segmentsX + 1;
 	int numCol = Shape::m_segmentsY + 1; 
+	tesselationX = Shape::m_segmentsX; 
+	tesselationY = Shape::m_segmentsY;
 
 	surface = Surface();
 	revolutionSurface = vector<vector<VertexID>>();
@@ -111,7 +120,7 @@ void RevolutionSolid::createSurface() {
 	vector<VertexID> topRow = revolutionSurface.back(), // Note that the top is when the rows are at the highest
 					 bottomRow = revolutionSurface[0]; // Note that the bottom is when the row is "0" (at the base)
 	
-	if (createNewTopConnect) {
+	if (isFlatTop) {
 		// Create a new point for everything in the top
 		vector<VertexID> newTopRow = vector<VertexID>();
 		for (int i = 0; i < numCol; i++) {
@@ -131,7 +140,7 @@ void RevolutionSolid::createSurface() {
 		topRow = newTopRow;
 	}
 
-	if (createNewBottomConnect) {
+	if (isFlatBottom) {
 		// Create a new point for everything in the bottom row
 		vector<VertexID> newBottomRow = vector<VertexID>();
 		for (int i = 0; i < numCol; i++) {
@@ -150,12 +159,14 @@ void RevolutionSolid::createSurface() {
 		}
 		bottomRow = newBottomRow;
 	}
+
 	//cout << "TOP " << topRow.size() << " BOT: " << bottomRow.size() << endl;
 	for (int i = 0; i < numCol; i++) {
 		// Connect to the top point
 		VertexID top1 = topRow[i],
 				 top2 = topRow[(i + 1) % numCol];
 		surface.makeFace(topID, top1, top2);
+		
 
 		// Connect to the bottom point
 		VertexID bottom1 = bottomRow[i],
