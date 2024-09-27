@@ -2,17 +2,17 @@
 #define REVOLUTION_SHAPE_H
 
 #include "Shape.h"
-#include "Geometry.h"
-
+#include "ClosedDipolePolygon.h"
 #include <glm/glm.hpp>
 #include <vector>
+#include <functional>
+#include <utility> // For pair
 
-class RevolutionSolid : public Shape {
+class RevolutionSolid {
 public:
 	RevolutionSolid();
-	RevolutionSolid(Vertex(*surfaceFunction)(int x, int y), Vertex top, Vertex bottom);
-	RevolutionSolid(Vertex(*surfaceFunction)(int x, int y), Vertex top, Vertex bottom,
-					bool hasFlatTop, bool hasFlatBottom);
+	RevolutionSolid(std::pair<float, float> domain, std::function<glm::vec2(float)> surfaceCurve, std::function<glm::vec2(float)> surfaceNormal);
+	RevolutionSolid(std::pair<float, float> domain, std::function<glm::vec2(float)>  surfaceCurve, std::function<glm::vec2(float)> surfaceNormal, bool hasFlatTop, bool hasFlatBottom);
 	~RevolutionSolid();
 
 	OBJ_TYPE getType() {
@@ -22,23 +22,18 @@ public:
 	void draw();
 
 	void drawNormal();
-
-	void createSurface();
-
 private:
-	Vertex topPoint, bottomPoint; 
-	std::vector<std::vector<VertexID>> revolutionSurface;
+	
 	bool isFlatTop, isFlatBottom;
-	Vertex(*parameterizedSurface)(int x, int y); // Function which takes in 2 ints and returns a Vertex
-	Surface surface; 
+	std::function<glm::vec2(float)> curveFunction; // Function which takes in 2 ints and returns a Vertex
+	std::function<glm::vec2(float)> normalFunction;
+	ClosedDipolePolygon closedPolygon; 
+	float leftT, rightT; 
 
-	int tesselationX = -1, tesselationY = -1;
-	
-	void initialize(Vertex(*surfaceFunction)(int row, int column), 
-				   Vertex top, Vertex bottom,
-				   bool shouldMakeNewVerticiesConnectToTop, bool shouldMakeNewVerticiesConnectToBottom);
+	void initialize(std::pair<float, float> domain, std::function<glm::vec2(float)> surfaceCurve, std::function<glm::vec2(float)> surfaceNormal,
+				    bool hasFlatTop, bool hasFlatBottom);
+	Vertex drawCurve(int thetaStep, int yStep);
 
-	
 };
 
 #endif
