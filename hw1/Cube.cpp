@@ -4,10 +4,17 @@
 
 using namespace std;
 
+// TODO :: NOTE we can't override this
 // When we need to update tessellation:
-void Cube::setSegments(int x, int y) {
-    tessellate(x, y);
+//void Cube::setSegments(int x, int y) {
+//    tessellate(x, y);
+//}
+
+Cube::Cube() {
+    //tessellate(Shape::m_segmentsX, Shape::m_segmentsY);
 }
+
+Cube::~Cube() {}
 
 /* tessellate 
 * 
@@ -77,17 +84,19 @@ void Cube::tessellate(int segmentsX, int segmentsY) {
 * surfaces
 *
 */
-void Cube::draw() {
-    glBegin(GL_TRIANGLES);
-    for (const auto& face : surface.faces()) {
-        for (int vertexIndex : face.verticies()) {
-            const auto& vertex = surface.vertex(vertexIndex);
-            glNormal3fv(glm::value_ptr(vertex.normal())); /* save the normal */
-            glVertex3fv(glm::value_ptr(vertex.position())); 
-        }
-    }
-    glEnd();
-}
+//void Cube::draw() {
+//    glBegin(GL_TRIANGLES);
+//    for (Face face : surface.faces()) {
+//        for (int vertexIndex : face.verticies()) {
+//            Vertex vertex = surface.vertex(vertexIndex);
+//            glm::vec3 position = vertex.position();
+//            glm::vec3 normal   = vertex.normal();
+//            glNormal3f(position.x, position.y, position.z); /* save the normal */
+//            glVertex3f(normal.x, normal.y, normal.z); 
+//        }
+//    }
+//    glEnd();
+//}
 
 /* drawNormal
 * 
@@ -95,14 +104,14 @@ void Cube::draw() {
 * of each vertex 
 *
 */
-void Cube::drawNormal() {
-    glBegin(GL_LINES);
-    for (const auto& vertex : surface.verticies()) {
-        glm::vec3 start = vertex.position();
-        glm::vec3 end = start + vertex.normal() * 0.1f; /* normal of length 0.1 */
-        glVertex3fv(glm::value_ptr(start));
-        glVertex3fv(glm::value_ptr(end));
-    }
-    glEnd();
-}
+//void Cube::drawNormal() {
+//    glBegin(GL_LINES);
+//    for (Vertex vertex : surface.verticies()) {
+//        glm::vec3 start = vertex.position();
+//        glm::vec3 end   = start + vertex.normal() * 0.1f; /* normal of length 0.1 */
+//        glVertex3f(start.x, start.y, start.z);
+//        glVertex3f(end.x, end.y, end.z);
+//    }
+//    glEnd();
+//}
 
