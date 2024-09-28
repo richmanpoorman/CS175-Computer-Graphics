@@ -21,7 +21,7 @@ public:
 	};
 
 private:
-	RevolutionSolid s;
+	RevolutionSolid sphere;
 };
 
 #endif

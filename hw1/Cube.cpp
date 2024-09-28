@@ -4,12 +4,6 @@
 
 using namespace std;
 
-// TODO :: NOTE we can't override this
-// When we need to update tessellation:
-//void Cube::setSegments(int x, int y) {
-//    tessellate(x, y);
-//}
-
 Cube::Cube() {
     //tessellate(Shape::m_segmentsX, Shape::m_segmentsY);
 }
@@ -24,6 +18,7 @@ Cube::~Cube() {}
 *
 */
 void Cube::tessellate(int segmentsX, int segmentsY) {
+        /* make a surface object for the cube */
         surface = Surface();
 
         /* the "size" of each subdivision */
@@ -32,7 +27,7 @@ void Cube::tessellate(int segmentsX, int segmentsY) {
 
         /* generate 3D vertices for all the points
         * in the shape. create six "faces" by 
-        * changing the direction of all points on a
+        * changing the normal of all points on a
         * given face. populate vertices vector. */
         for (int face = 0; face < 6; ++face) {
             for (int i = 0; i <= segmentsX; ++i) {
@@ -77,41 +72,4 @@ void Cube::tessellate(int segmentsX, int segmentsY) {
             }
         }
     }
-
-/* draw
-* 
-* draw triangles from the points on all
-* surfaces
-*
-*/
-//void Cube::draw() {
-//    glBegin(GL_TRIANGLES);
-//    for (Face face : surface.faces()) {
-//        for (int vertexIndex : face.verticies()) {
-//            Vertex vertex = surface.vertex(vertexIndex);
-//            glm::vec3 position = vertex.position();
-//            glm::vec3 normal   = vertex.normal();
-//            glNormal3f(position.x, position.y, position.z); /* save the normal */
-//            glVertex3f(normal.x, normal.y, normal.z); 
-//        }
-//    }
-//    glEnd();
-//}
-
-/* drawNormal
-* 
-* draw the normal vectors off 
-* of each vertex 
-*
-*/
-//void Cube::drawNormal() {
-//    glBegin(GL_LINES);
-//    for (Vertex vertex : surface.verticies()) {
-//        glm::vec3 start = vertex.position();
-//        glm::vec3 end   = start + vertex.normal() * 0.1f; /* normal of length 0.1 */
-//        glVertex3f(start.x, start.y, start.z);
-//        glVertex3f(end.x, end.y, end.z);
-//    }
-//    glEnd();
-//}
 
