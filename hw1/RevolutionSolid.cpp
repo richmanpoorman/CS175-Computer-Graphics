@@ -12,7 +12,15 @@ using namespace std;
 glm::vec2 defaultFunction(float t) { return glm::vec2(0, 0); }
 
 RevolutionSolid::RevolutionSolid() { initialize({ 0, 0 }, defaultFunction, defaultFunction, false, false); }
-RevolutionSolid::RevolutionSolid(pair<float, float> domain, std::function<glm::vec2(float)> surfaceCurve, std::function<glm::vec2(float)> surfaceNormal) { initialize(domain, surfaceCurve, surfaceNormal, true, true); }
+RevolutionSolid::RevolutionSolid(pair<float, float> domain, std::function<glm::vec2(float)> surfaceCurve, std::function<glm::vec2(float)> surfaceNormal) {
+	// Tries to detect whether the surface has flat top or point top
+	float tolerance = 1e-6;
+	glm::vec2 startPoint = surfaceCurve(domain.first),
+			  endPoint = surfaceCurve(domain.second);
+	float topX    = startPoint.y > endPoint.y ? startPoint.x : endPoint.x,
+		  bottomX = startPoint.y > endPoint.y ? endPoint.x : startPoint.x;
+	initialize(domain, surfaceCurve, surfaceNormal, abs(topX) > tolerance, abs(bottomX) > tolerance);
+}
 RevolutionSolid::RevolutionSolid(pair<float, float> domain, std::function<glm::vec2(float)> surfaceCurve, std::function<glm::vec2(float)>  surfaceNormal, bool hasFlatTop, bool hasFlatBottom) { initialize(domain, surfaceCurve, surfaceNormal, hasFlatTop, hasFlatBottom); }
 RevolutionSolid::~RevolutionSolid() {}
 

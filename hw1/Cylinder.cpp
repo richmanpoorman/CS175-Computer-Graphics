@@ -20,7 +20,7 @@ glm::vec2 cylinderNormal(float t) {
 }
 
 Cylinder::Cylinder() {
-	cylinder = RevolutionSolid({-1.0 * height / 2.0, height / 2.0}, &cylinderCurve, &cylinderNormal, true, true);
+	cylinder = RevolutionSolid({-1.0 * height / 2.0, height / 2.0}, &cylinderCurve, &cylinderNormal);
 }
 Cylinder::~Cylinder() {};
 
