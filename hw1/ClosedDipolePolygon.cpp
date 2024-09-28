@@ -19,21 +19,7 @@ void ClosedDipolePolygon::draw() {
 	if (tesselationX != Shape::m_segmentsX or tesselationY != Shape::m_segmentsY)
 		createSurface();
 
-	vector<Vertex> verticies = surface.verticies();
-	glBegin(GL_TRIANGLES);
-	for (Face face : surface.faces()) {
-		//cout << "FACE" << endl;
-		for (VertexID vertexID : face.verticies()) {
-			Vertex vertex = surface.vertex(vertexID);
-			glm::vec3 position = vertex.position(), normal = vertex.normal();
-			glVertex3f(position.x, position.y, position.z);
-			glNormal3f(normal.x, normal.y, normal.z);
-			//cout << "Vertex: " << vertexID << " : " << position.x << ", " << position.y << ", " << position.z << endl;
-		}
-
-	}
-	
-	glEnd();
+	surface.draw();
 }
 
 void ClosedDipolePolygon::drawNormal() {
@@ -41,19 +27,7 @@ void ClosedDipolePolygon::drawNormal() {
 	if (tesselationX != Shape::m_segmentsX or tesselationY != Shape::m_segmentsY)
 		createSurface();
 
-	vector<Vertex> verticies = surface.verticies();
-	glBegin(GL_LINES);
-	for (Vertex vertex : verticies) {
-		glm::vec3 position = vertex.position(),
-			      normal   = vertex.normal();
-
-		glm::vec3 normalEnd   = position + normalSize * normal;
-		glm::vec3 normalStart = position;
-		glVertex3f(normalStart.x, normalStart.y, normalStart.z);
-		glVertex3f(normalEnd.x, normalEnd.y, normalEnd.z);
-	}
-
-	glEnd();
+	surface.drawNormal();
 }
 
 void ClosedDipolePolygon::initialize(std::function<Vertex(int, int)> surfaceFunction,

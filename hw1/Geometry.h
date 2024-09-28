@@ -53,6 +53,9 @@ public:
 	std::vector<Vertex> verticies();
 	std::vector<Face>   faces();
 
+	void draw();
+	void drawNormal();
+
 	Vertex vertex(VertexID vertexID);
 	VertexID addVertex(Vertex vertex);
 	Vertex removeVertex(VertexID vertexID);

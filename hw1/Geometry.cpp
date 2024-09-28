@@ -3,6 +3,8 @@
 #include <vector>
 #include <unordered_set>
 
+#define normalSize 0.1f
+
 using namespace std; 
 
 
@@ -149,3 +151,40 @@ vector<Face> Surface::faces() {
 		faceList.push_back(face);
 	}
 }
+
+void Surface::draw() {
+	//vector<Vertex> vertexList = verticies();
+	glBegin(GL_TRIANGLES);
+	for (Face face : faces()) {
+		//cout << "FACE" << endl;
+		for (VertexID vertexID : face.verticies()) {
+			Vertex currentVertex = vertex(vertexID);
+			glm::vec3 position = currentVertex.position(), normal = currentVertex.normal();
+			glVertex3f(position.x, position.y, position.z);
+			glNormal3f(normal.x, normal.y, normal.z);
+			//cout << "Vertex: " << vertexID << " : " << position.x << ", " << position.y << ", " << position.z << endl;
+		}
+
+	}
+
+	glEnd();
+}
+
+void Surface::drawNormal() {
+	
+	vector<Vertex> vertexList = verticies();
+	glBegin(GL_LINES);
+	for (Vertex vertex : vertexList) {
+		glm::vec3 position = vertex.position(),
+			normal = vertex.normal();
+
+		glm::vec3 normalEnd = position + normalSize * normal;
+		glm::vec3 normalStart = position;
+		glVertex3f(normalStart.x, normalStart.y, normalStart.z);
+		glVertex3f(normalEnd.x, normalEnd.y, normalEnd.z);
+	}
+
+	glEnd();
+}
+
+#undef normalSize
