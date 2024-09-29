@@ -2,23 +2,23 @@
 #define CONE_H
 
 #include "Shape.h"
+#include "RevolutionSolid.h"
 
 class Cone : public Shape {
 public:
-	Cone() {};
-	~Cone() {};
+	Cone();
+	~Cone();
 
 	OBJ_TYPE getType() {
 		return SHAPE_CONE;
 	}
 
-	void draw() {
-	};
+	void draw();
 
-	void drawNormal() {
-	};
+	void drawNormal();
 
 private:
+	RevolutionSolid cone;
 };
 
 #endif

@@ -45,7 +45,7 @@ void ClosedDipolePolygon::initialize(std::function<Vertex(int, int)> surfaceFunc
 
 void createVerticies(Surface &surface, vector<vector<VertexID>> &verticies, function<Vertex(int, int)> vertexFunction, bool hasFlatTop, bool hasFlatBottom) {
 	int numRow = Shape::m_segmentsX + (hasFlatTop ? 1 : 0);
-	int numCol = Shape::m_segmentsY + 1;
+	int numCol = Shape::m_segmentsY; // Note that we exclude when column = Shape::m_segments because that last face connects to the first
 	int rowStart = (hasFlatBottom ? 0 : 1); 
 	int colStart = 0;
 	// Add all of the new verticies
@@ -64,53 +64,41 @@ void createVerticies(Surface &surface, vector<vector<VertexID>> &verticies, func
 	
 }
 
-void setTriangleFaces(Surface &surface, vector<vector<VertexID>> &verticies) {
+
+
+
+void setTriangleFaces(Surface& surface, vector<vector<VertexID>>& verticies) {
 	assert(not verticies.empty());
 	int numRow = verticies.size(), numCol = verticies[0].size();
 	// Add the upper left triangle faces (Note that "o" is the fixed point)
-	//  o - x
-	//  | /
-	//  x 
+	//  v1 - v3
+	//  |  /  | 
+	//  v2 - v4
 	for (int x = 0; x < numRow - 1; x++) for (int y = 0; y < numCol; y++) {
+		int nextX = (x + 1) % numRow, nextY = (y + 1) % numCol;
 		VertexID v1 = verticies[x][y],
-			     v2 = verticies[x + 1][y],
-			     v3 = verticies[x][(y + 1) % numCol];
+			v2 = verticies[nextX][y],
+			v3 = verticies[x][nextY], 
+			v4 = verticies[nextX][nextY];
 		//cout << "V1: " << v1 << " V2: " << v2 << " V3: " << v3 << endl;
 		surface.makeFace(v1, v2, v3);
+		surface.makeFace(v3, v2, v4);
 	}
-
-	// Add the upper left triangle faces (Note that "o" is the fixed point)
-	//      o
-	//    / |
-	//  x - x
-	for (int x = 0; x < numRow - 1; x++) for (int y = 0; y < numCol; y++) {
-		VertexID v1 = verticies[x][y],
-			     v2 = verticies[x + 1][(y + numCol - 1) % numCol],
-			     v3 = verticies[x + 1][y];
-		surface.makeFace(v1, v2, v3);
-	}
+	
 }
+void connectTopAndBottom(Surface& surface, vector<vector<VertexID>>& verticies, VertexID topVertex, VertexID bottomVertex, bool isTopFlat, bool isBottomFlat) {
 
-void connectTopAndBottom(Surface &surface, vector<vector<VertexID>> &verticies, VertexID topVertex, VertexID bottomVertex, bool isTopFlat, bool isBottomFlat) {
-
-	vector<VertexID> topRow    = verticies.back() , // Note that the top is when the rows are at the highest
-				     bottomRow = verticies[0]; // Note that the bottom is when the row is "0" (at the base)
+	vector<VertexID> topRow = verticies.back(), // Note that the top is when the rows are at the highest
+		bottomRow = verticies[0]; // Note that the bottom is when the row is "0" (at the base)
 
 	assert(topRow.size() == bottomRow.size());
-	int numCol = topRow.size(); 
-
+	int numCol = topRow.size();
+	//cout << "NUM COL: " << numCol << endl;
 	if (isTopFlat) {
 		// Create a new point for everything in the top
 		vector<VertexID> newTopRow = vector<VertexID>();
-		for (int i = 0; i < numCol; i++) {
-			//Vertex copy = surface.vertex(topRow[i]),
-			//	   toTheRight = surface.vertex(topRow[(i + 1) % numCol]);
-			//
-			//// Direction is assumed to be perpendicular to both the direction towards the top point and the next vector along the edge
-			//glm::vec3 direction = glm::cross((topPoint.position() - copy.position()), 
-			//								 (toTheRight.position() - copy.position()));
-
-			Vertex copy = surface.vertex(topRow[i]);
+		for (VertexID vertexID : topRow) {
+			Vertex copy = surface.vertex(vertexID);
 			glm::vec3 direction = glm::vec3(0.0, 1.0, 0.0);
 			Vertex   newVertex = Vertex(copy.position(), glm::normalize(direction));
 			VertexID vertexID = surface.addVertex(newVertex);
@@ -122,15 +110,9 @@ void connectTopAndBottom(Surface &surface, vector<vector<VertexID>> &verticies, 
 	if (isBottomFlat) {
 		// Create a new point for everything in the bottom row
 		vector<VertexID> newBottomRow = vector<VertexID>();
-		for (int i = 0; i < numCol; i++) {
-			//Vertex copy = surface.vertex(bottomRow[i]),
-			//	   toTheLeft = surface.vertex(topRow[(i + numCol - 1) % numCol]);
+		for (VertexID vertexID : bottomRow) {
 
-			//// Direction is assumed to be perpendicular to both the direction towards the top point and the next vector along the edge
-			//glm::vec3 direction = glm::cross((bottomPoint.position() - copy.position()), 
-			//								 (toTheLeft.position() - copy.position()));
-
-			Vertex copy = surface.vertex(bottomRow[i]);
+			Vertex copy = surface.vertex(vertexID);
 			glm::vec3 direction = glm::vec3(0.0, -1.0, 0.0);
 			Vertex   newVertex = Vertex(copy.position(), glm::normalize(direction));
 			VertexID vertexID = surface.addVertex(newVertex);
@@ -138,17 +120,22 @@ void connectTopAndBottom(Surface &surface, vector<vector<VertexID>> &verticies, 
 		}
 		bottomRow = newBottomRow;
 	}
-
+	assert(topRow.size() == bottomRow.size());
 	//cout << "TOP " << topRow.size() << " BOT: " << bottomRow.size() << endl;
-	for (int i = 0; i < numCol; i++) {
+	for (int i = 0, n = topRow.size(); i < n; i++) {
 		// Connect to the top point
 		VertexID top2 = topRow[i],
-				 top1 = topRow[(i + 1) % numCol];
+			top1 = topRow[(i + 1) % n];
 		surface.makeFace(topVertex, top1, top2);
 
-		// Connect to the bottom point
+		//glm::vec3 top1Norm = surface.vertex(top1).position();
+		//glm::vec3 top2Norm = surface.vertex(top2).position();
+		//cout << "TOP 1: (" << top1Norm.x << ", " << top1Norm.y << ", " << top1Norm.z << ") TOP 2: (" << top2Norm.x << ", " << top2Norm.y << ", " << top2Norm.z << ")" << endl;
+	}
+	// Connect to the bottom point
+	for (int n = bottomRow.size(), i = n - 1; i >= 0; i--) {
 		VertexID bottom1 = bottomRow[i],
-				 bottom2 = bottomRow[(i + 1) % numCol];
+			bottom2 = bottomRow[(i + 1) % n];
 		surface.makeFace(bottomVertex, bottom1, bottom2);
 	}
 }
@@ -170,4 +157,6 @@ void ClosedDipolePolygon::createSurface() {
 	setTriangleFaces(surface, revolutionSurface);
 	
 	connectTopAndBottom(surface, revolutionSurface, topID, bottomID, isFlatTop, isFlatBottom);
+	
 }
+

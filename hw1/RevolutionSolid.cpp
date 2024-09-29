@@ -15,10 +15,12 @@ RevolutionSolid::RevolutionSolid() { initialize({ 0, 0 }, defaultFunction, defau
 RevolutionSolid::RevolutionSolid(pair<float, float> domain, std::function<glm::vec2(float)> surfaceCurve, std::function<glm::vec2(float)> surfaceNormal) {
 	// Tries to detect whether the surface has flat top or point top
 	float tolerance = 1e-6;
-	glm::vec2 startPoint = surfaceCurve(domain.first),
-			  endPoint = surfaceCurve(domain.second);
-	float topX    = startPoint.y > endPoint.y ? startPoint.x : endPoint.x,
-		  bottomX = startPoint.y > endPoint.y ? endPoint.x : startPoint.x;
+	glm::vec2 startPoint = surfaceCurve(domain.second),
+			  endPoint   = surfaceCurve(domain.first);
+	float topX    = startPoint.x,
+		  bottomX = endPoint.x;
+	//cout << topX << " " << bottomX << endl;
+	//cout << (abs(bottomX) > tolerance) << endl;
 	initialize(domain, surfaceCurve, surfaceNormal, abs(topX) > tolerance, abs(bottomX) > tolerance);
 }
 RevolutionSolid::RevolutionSolid(pair<float, float> domain, std::function<glm::vec2(float)> surfaceCurve, std::function<glm::vec2(float)>  surfaceNormal, bool hasFlatTop, bool hasFlatBottom) { initialize(domain, surfaceCurve, surfaceNormal, hasFlatTop, hasFlatBottom); }
@@ -47,7 +49,7 @@ function<Vertex(int, int)> makeCurveFunction(float leftT, float rightT, function
 		glm::vec2 normalOnCurve = normalFunction(t);
 
 		// Compute the vertex arrow after rotating
-		glm::vec4 positionVector = rotationMatrix * glm::vec4(onCurve.x, onCurve.y, 0, 0);
+		glm::vec4 positionVector = rotationMatrix * glm::vec4(onCurve.x, onCurve.y, 0, 1);
 		glm::vec4 normalVector = rotationMatrix * glm::vec4(normalOnCurve.x, normalOnCurve.y, 0, 0);
 
 		// Turn it into a vertex
@@ -66,9 +68,9 @@ void RevolutionSolid::initialize(pair<float, float> domain, function<glm::vec2(f
 
 	float leftTResultY = curveFunction(leftT).y, 
 		  rightTResultY = curveFunction(rightT).y;
-	Vertex topVertex    = Vertex(glm::vec3(0, max(leftTResultY, rightTResultY), 0), glm::vec3(0,  1, 0));
-	Vertex bottomVertex = Vertex(glm::vec3(0, min(leftTResultY, rightTResultY), 0), glm::vec3(0, -1, 0));
+	Vertex topVertex    = Vertex(glm::vec3(0, rightTResultY, 0), glm::vec3(0,  1, 0));
+	Vertex bottomVertex = Vertex(glm::vec3(0, leftTResultY, 0), glm::vec3(0, -1, 0));
 	function<Vertex(int, int)> curveFunc = makeCurveFunction(leftT, rightT, curveFunction, normalFunction);
-	closedPolygon = ClosedDipolePolygon(curveFunc, topVertex, bottomVertex, isFlatTop, isFlatBottom);
+	closedPolygon = ClosedDipolePolygon(curveFunc, topVertex, bottomVertex, hasFlatTop, hasFlatBottom);
 }
 

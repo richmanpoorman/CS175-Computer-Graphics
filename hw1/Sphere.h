@@ -7,18 +7,16 @@
 
 class Sphere : public Shape {
 public:
-	Sphere() {};
-	~Sphere() {};
+	Sphere();
+	~Sphere();
 
 	OBJ_TYPE getType() {
 		return SHAPE_SPHERE;
 	}
 
-	void draw() {
-	};
+	void draw();
 
-	void drawNormal() {
-	};
+	void drawNormal();
 
 private:
 	RevolutionSolid sphere;
