@@ -13,7 +13,7 @@ using namespace std;
 
 
 Cube::Cube() {
-    tessellate(Shape::m_segmentsX, Shape::m_segmentsY);
+    tessellate();
 }
 
 Cube::~Cube() {}
@@ -25,7 +25,10 @@ Cube::~Cube() {}
 * (segments) along each axis
 *
 */
-void Cube::tessellate(int segmentsX, int segmentsY) {
+void Cube::tessellate() {
+
+        int segmentsX = Shape::m_segmentsX;
+        int segmentsY = Shape::m_segmentsY;
         /* make a surface object for the cube */
         surface = Surface();
         /* the "size" of each subdivision */
@@ -89,10 +92,12 @@ void Cube::tessellate(int segmentsX, int segmentsY) {
 
 
 void Cube::draw() {
+    tessellate();
     surface.draw();
 }
 
 void Cube::drawNormal() {
+    tessellate();
     surface.drawNormal();
 }
 
