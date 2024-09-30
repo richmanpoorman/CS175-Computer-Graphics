@@ -41,7 +41,7 @@ void Vertex::setNormal(glm::vec3 directionVector) { normalVector = glm::normaliz
  */
 
  /*
-  *  Face
+  *  Face - A data struct that reps a triangle (face) on the Surface.
   */
 // Sets the verticies to (-1, -1, -1)
 Face::Face() { initialize(-1, -1, -1); }
@@ -56,6 +56,7 @@ void Face::initialize(VertexID vertexIndex1, VertexID vertexIndex2, VertexID ver
 
 vector<int> Face::verticies() { return { vertexIndicies[0], vertexIndicies[1], vertexIndicies[2] }; }
 
+// Adds the vertices to a face
 void Face::setVerticies(VertexID newVertexIndicies[3]) {
 	for (int i = 0; i < 3; i++)
 		vertexIndicies[i] = newVertexIndicies[i];
@@ -63,15 +64,17 @@ void Face::setVerticies(VertexID newVertexIndicies[3]) {
 
 
 /*
- *  Surface
+ *  Surface - a collection of faces, symbolize whole shape
  */
 Surface::Surface() { nextFaceID = nextVertexID = 1;  }
 Surface::~Surface() {}
+
 
 Vertex Surface::vertex(VertexID vertexID) {
 	assert(hasVertex(vertexID));
 	return vertexMap[vertexID];
 }
+
 VertexID Surface::addVertex(Vertex vertex) {
 	VertexID id = nextVertexID++; 
 
@@ -85,6 +88,7 @@ Face Surface::face(FaceID faceID) {
 	assert(hasFace(faceID));
 	return faceMap[faceID];
 }
+
 FaceID Surface::makeFace(VertexID vertex1ID, VertexID vertex2ID, VertexID vertex3ID) {
 	assert(hasVertex(vertex1ID) and hasVertex(vertex2ID) and hasVertex(vertex3ID)); // Makes sure that the verticies are in the dictionary 
 	FaceID faceID = nextFaceID++;
@@ -94,8 +98,6 @@ FaceID Surface::makeFace(VertexID vertex1ID, VertexID vertex2ID, VertexID vertex
 	faceList.push_back(faceID);
 
 	faceMap[faceID] = face;
-	// Why is this twice?
-	//faceList.push_back(faceID);
 	
 	return faceID;
 }
@@ -103,6 +105,7 @@ FaceID Surface::makeFace(VertexID vertex1ID, VertexID vertex2ID, VertexID vertex
 bool Surface::hasVertex(VertexID vertexID) { return vertexMap.count(vertexID); }
 bool Surface::hasFace(FaceID faceID) { return faceMap.count(faceID); }
 
+// getter functions for vertices and faces in surface
 vector<Vertex> Surface::verticies() { 
 
 	vector<Vertex> fullVertexList = vector<Vertex>();
@@ -126,11 +129,13 @@ vector<Face> Surface::faces() {
 void Surface::draw() {
 	//vector<Vertex> vertexList = verticies();
 	glBegin(GL_TRIANGLES);
+	// Iterate through all triangle faces in the surface and draw them 
 	for (Face face : faces()) {
-		//cout << "FACE" << endl;
+
 		for (VertexID vertexID : face.verticies()) {
 			Vertex currentVertex = vertex(vertexID);
 			glm::vec3 position = currentVertex.position(), normal = currentVertex.normal();
+			// set normal before drawing vertex to make things not "pointy"
 			glNormal3f(normal.x, normal.y, normal.z);
 			glVertex3f(position.x, position.y, position.z);
 			
