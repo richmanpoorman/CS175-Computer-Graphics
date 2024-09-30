@@ -26,7 +26,7 @@ glm::vec2 sphereNormal(float t) {
 }
 
 Sphere::Sphere() {
-	sphere = RevolutionSolid({0, PI}, &sphereCurve, &sphereNormal);
+	sphere = RevolutionSolid({PI, 0}, &sphereCurve, &sphereNormal);
 };
 
 Sphere::~Sphere() {};

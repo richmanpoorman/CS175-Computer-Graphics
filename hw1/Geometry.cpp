@@ -94,7 +94,8 @@ FaceID Surface::makeFace(VertexID vertex1ID, VertexID vertex2ID, VertexID vertex
 	faceList.push_back(faceID);
 
 	faceMap[faceID] = face;
-	faceList.push_back(faceID);
+	// Why is this twice?
+	//faceList.push_back(faceID);
 	
 	return faceID;
 }
