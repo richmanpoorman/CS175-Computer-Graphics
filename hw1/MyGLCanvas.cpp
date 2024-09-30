@@ -33,7 +33,7 @@ MyGLCanvas::~MyGLCanvas() {
     delete cylinder;
     delete cone;
     delete sphere;
-    // delete torus;
+    delete hourglass;
 }
 
 void MyGLCanvas::setShape(OBJ_TYPE type) {
