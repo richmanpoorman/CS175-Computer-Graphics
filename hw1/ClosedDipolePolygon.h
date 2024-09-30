@@ -8,6 +8,8 @@
 #include <vector>
 #include <functional>
 
+
+// Topologically equivalent to a sphere
 class ClosedDipolePolygon {
 public:
 	ClosedDipolePolygon();
