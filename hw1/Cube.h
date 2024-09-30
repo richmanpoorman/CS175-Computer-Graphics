@@ -14,8 +14,8 @@ public:
 	}
 
     void tessellate(int segmentsX, int segmentsY);
-	void draw() {};
-	void drawNormal() {};
+	void draw();
+	void drawNormal();
 
 private:
     Surface surface;
