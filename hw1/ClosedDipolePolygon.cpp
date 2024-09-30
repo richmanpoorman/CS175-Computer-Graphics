@@ -82,7 +82,7 @@ void setTriangleFaces(Surface& surface, vector<vector<VertexID>>& verticies) {
 			v4 = verticies[nextX][nextY];
 		//cout << "V1: " << v1 << " V2: " << v2 << " V3: " << v3 << endl;
 		surface.makeFace(v2, v3, v1);
-		surface.makeFace(v4, v3, v2);
+		surface.makeFace(v2, v4, v3);
 	}
 	
 }
@@ -101,8 +101,8 @@ void connectTopAndBottom(Surface& surface, vector<vector<VertexID>>& verticies, 
 			Vertex copy = surface.vertex(vertexID);
 			glm::vec3 direction = glm::vec3(0.0, 1.0, 0.0);
 			Vertex   newVertex = Vertex(copy.position(), glm::normalize(direction));
-			VertexID ID = surface.addVertex(newVertex);
-			newTopRow.push_back(ID);
+			VertexID vertexID = surface.addVertex(newVertex);
+			newTopRow.push_back(vertexID);
 		}
 		topRow = newTopRow;
 	}
@@ -115,8 +115,8 @@ void connectTopAndBottom(Surface& surface, vector<vector<VertexID>>& verticies, 
 			Vertex copy = surface.vertex(vertexID);
 			glm::vec3 direction = glm::vec3(0.0, -1.0, 0.0);
 			Vertex   newVertex = Vertex(copy.position(), glm::normalize(direction));
-			VertexID ID = surface.addVertex(newVertex);
-			newBottomRow.push_back(ID);
+			VertexID vertexID = surface.addVertex(newVertex);
+			newBottomRow.push_back(vertexID);
 		}
 		bottomRow = newBottomRow;
 	}

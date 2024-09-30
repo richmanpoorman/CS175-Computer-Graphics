@@ -28,7 +28,7 @@ void Vertex::initialize(glm::vec3 position, glm::vec3 normal) {
 }
 
 glm::vec3 Vertex::position() { return positionVector; }
-glm::vec3 Vertex::normal() { return normalVector; }
+glm::vec3 Vertex::normal() { return glm::normalize(normalVector); }
 
 void Vertex::setPosition(glm::vec3 newPosition) { positionVector = positionVector; }
 void Vertex::setNormal(glm::vec3 directionVector) { normalVector = glm::normalize(directionVector); }
@@ -131,8 +131,9 @@ void Surface::draw() {
 		for (VertexID vertexID : face.verticies()) {
 			Vertex currentVertex = vertex(vertexID);
 			glm::vec3 position = currentVertex.position(), normal = currentVertex.normal();
-			glVertex3f(position.x, position.y, position.z);
 			glNormal3f(normal.x, normal.y, normal.z);
+			glVertex3f(position.x, position.y, position.z);
+			
 			//cout << "Vertex: " << vertexID << " : " << position.x << ", " << position.y << ", " << position.z << endl;
 		}
 
