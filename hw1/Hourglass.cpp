@@ -22,11 +22,13 @@ glm::vec2 hourglassCurve (float t) {
 * as the vector from the Hourglass's center to that 
 * point */
 glm::vec2 hourglassNormal(float t) {
+    // Draw the normals at the orthogonal to the derivative of the surface 
     return glm::normalize(glm::vec2(0.5 / (cos(t) * cos(t)), -tan(t) / cos(t)));
 }
 
 Hourglass::Hourglass() {
-	hourglass = RevolutionSolid({-0.25 * PI, 0.25 * PI}, &hourglassCurve, &hourglassNormal);
+	// use the Reovlution Solid interface to do the rest for us
+    hourglass = RevolutionSolid({-0.25 * PI, 0.25 * PI}, &hourglassCurve, &hourglassNormal);
 };
 
 Hourglass::~Hourglass() {};
