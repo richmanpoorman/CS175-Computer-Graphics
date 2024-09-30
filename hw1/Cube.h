@@ -13,7 +13,7 @@ public:
 		return SHAPE_CUBE;
 	}
 
-    void tessellate(int segmentsX, int segmentsY);
+    void tessellate();
 	void draw();
 	void drawNormal();
 
