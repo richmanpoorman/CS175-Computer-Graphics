@@ -22,7 +22,7 @@ glm::vec2 hourglassCurve (float t) {
 * as the vector from the Hourglass's center to that 
 * point */
 glm::vec2 hourglassNormal(float t) {
-    return glm::normalize(glm::vec2(tan(t) / cos(t), 1.0 / (cos(t) * cos(t))));
+    return glm::normalize(glm::vec2(0.5 / (cos(t) * cos(t)), -tan(t) / cos(t)));
 }
 
 Hourglass::Hourglass() {

@@ -81,8 +81,8 @@ void setTriangleFaces(Surface& surface, vector<vector<VertexID>>& verticies) {
 			v3 = verticies[x][nextY], 
 			v4 = verticies[nextX][nextY];
 		//cout << "V1: " << v1 << " V2: " << v2 << " V3: " << v3 << endl;
-		surface.makeFace(v2, v3, v1);
-		surface.makeFace(v2, v4, v3);
+		surface.makeFace(v3, v1, v2);
+		surface.makeFace(v4, v3, v2);
 	}
 	
 }
