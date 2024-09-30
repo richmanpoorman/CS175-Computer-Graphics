@@ -76,23 +76,8 @@ VertexID Surface::addVertex(Vertex vertex) {
 	VertexID id = nextVertexID++; 
 
 	vertexMap[id] = vertex;
-	vertexInFace[id] = unordered_set<FaceID>();
-	vertexList.push_back(vertex);
+	vertexList.push_back(id);
 	return id; 
-}
-Vertex Surface::removeVertex(VertexID vertexID) {
-	assert(hasVertex(vertexID)); // Makes sure that the key is actually in the dictionary
-
-	Vertex vertex = vertexMap[vertexID];
-
-	for (FaceID faceID : vertexInFace[vertexID])
-		removeFace(faceID);
-
-	vertexInFace.erase(vertexID);
-	vertexMap.erase(vertexID);
-	vertexList = vector<Vertex>(); // Erase it all so it can be made again later
-
-	return vertex;
 }
 
 
@@ -106,50 +91,35 @@ FaceID Surface::makeFace(VertexID vertex1ID, VertexID vertex2ID, VertexID vertex
 
 	Face face = Face(vertex1ID, vertex2ID, vertex3ID);
 
-	vertexInFace[vertex1ID].insert(faceID);
-	vertexInFace[vertex2ID].insert(faceID);
-	vertexInFace[vertex3ID].insert(faceID);
+	faceList.push_back(faceID);
 
 	faceMap[faceID] = face;
-	faceList.push_back(face);
+	faceList.push_back(faceID);
 	
 	return faceID;
-}
-Face Surface::removeFace(FaceID faceID) {
-	assert(hasFace(faceID));
-
-	Face face = faceMap[faceID];
-
-	faceMap.erase(faceID);
-
-	for (VertexID vertexID : face.verticies())
-		vertexInFace.erase(faceID);
-
-	faceList = vector<Face>(); // Erase it all so it can be made later
-
-	return face;
 }
 
 bool Surface::hasVertex(VertexID vertexID) { return vertexMap.count(vertexID); }
 bool Surface::hasFace(FaceID faceID) { return faceMap.count(faceID); }
 
 vector<Vertex> Surface::verticies() { 
-	if (not vertexList.empty()) return vertexList; 
 
-	vertexList = vector<Vertex>();
-	for (auto mapIterator : vertexMap) {
-		Vertex vertex = mapIterator.second; 
-		vertexList.push_back(vertex);
+	vector<Vertex> fullVertexList = vector<Vertex>();
+	for (VertexID vertexID : vertexList) {
+		Vertex currentVertex = vertex(vertexID); 
+		fullVertexList.push_back(currentVertex);
 	}
+
+	return fullVertexList;
 }
 vector<Face> Surface::faces() { 
-	if (not faceList.empty()) return faceList; 
 	
-	faceList = vector<Face>();
-	for (auto mapIterator : faceMap) {
-		Face face = mapIterator.second;
-		faceList.push_back(face);
+	vector<Face> fullFaceList = vector<Face>();
+	for (FaceID faceID : faceList) {
+		Face currentFace = face(faceID);
+		fullFaceList.push_back(currentFace);
 	}
+	return fullFaceList;
 }
 
 void Surface::draw() {

@@ -15,7 +15,7 @@
 #include "Cylinder.h"
 #include "Shape.h"
 #include "Sphere.h"
-//#include "Torus.h"
+#include "Hourglass.h"
 
 
 class MyGLCanvas : public Fl_Gl_Window {
@@ -36,6 +36,7 @@ public:
     Cone     *cone;
     Sphere   *sphere;
     // Torus* torus;
+    Hourglass* hourglass;
     Shape *shape;
 
     MyGLCanvas(int x, int y, int w, int h, const char *l = 0);

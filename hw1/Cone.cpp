@@ -26,7 +26,7 @@ glm::vec2 coneNormal(float t) {
 }
 
 Cone::Cone() {
-    cout << "CONE" << endl;
+    //cout << "CONE" << endl;
 	cone = RevolutionSolid({radius, 0}, &coneCurve, &coneNormal);
 };
 

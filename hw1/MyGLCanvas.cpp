@@ -22,6 +22,7 @@ MyGLCanvas::MyGLCanvas(int x, int y, int w, int h, const char *l) : Fl_Gl_Window
     cone     = new Cone();
     sphere   = new Sphere();
     // torus = new Torus();
+    hourglass = new Hourglass();
     shape = cube;
 
     shape->setSegments(segmentsX, segmentsY);
@@ -43,7 +44,7 @@ void MyGLCanvas::setShape(OBJ_TYPE type) {
     case SHAPE_CONE: shape = cone; break;
     case SHAPE_SPHERE: shape = sphere; break;
     case SHAPE_SPECIAL1:
-        // shape = torus;
+        shape = hourglass;
         break;
     default: shape = cube;
     }

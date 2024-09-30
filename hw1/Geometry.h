@@ -58,21 +58,18 @@ public:
 
 	Vertex vertex(VertexID vertexID);
 	VertexID addVertex(Vertex vertex);
-	Vertex removeVertex(VertexID vertexID);
 
 	Face face(FaceID faceID);
 	FaceID makeFace(VertexID vertex1ID, VertexID vertex2ID, VertexID vertex3ID);
-	Face removeFace(FaceID faceID);
 
 	bool hasVertex(VertexID vertexID);
 	bool hasFace(FaceID faceID);
 
 private:
-	std::vector<Vertex> vertexList; 
-	std::vector<Face> faceList;
 	std::unordered_map<VertexID, Vertex> vertexMap;
 	std::unordered_map<FaceID, Face> faceMap;
-	std::unordered_map<VertexID, std::unordered_set<FaceID>> vertexInFace;
+	std::vector<FaceID> faceList; 
+	std::vector<VertexID> vertexList;
 	VertexID nextVertexID;
 	FaceID nextFaceID;
 };
