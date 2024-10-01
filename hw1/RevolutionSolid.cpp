@@ -19,8 +19,8 @@ RevolutionSolid::RevolutionSolid(pair<float, float> domain, std::function<glm::v
 			  endPoint   = surfaceCurve(domain.first);
 	float topX    = startPoint.x,
 		  bottomX = endPoint.x;
-	//cout << topX << " " << bottomX << endl;
-	//cout << (abs(bottomX) > tolerance) << endl;
+	
+	// Auto checks if there should or should not be a flat top and bottom
 	initialize(domain, surfaceCurve, surfaceNormal, abs(topX) > tolerance, abs(bottomX) > tolerance);
 }
 RevolutionSolid::RevolutionSolid(pair<float, float> domain, std::function<glm::vec2(float)> surfaceCurve, std::function<glm::vec2(float)>  surfaceNormal, bool hasFlatTop, bool hasFlatBottom) { initialize(domain, surfaceCurve, surfaceNormal, hasFlatTop, hasFlatBottom); }
@@ -29,6 +29,14 @@ RevolutionSolid::~RevolutionSolid() {}
 void RevolutionSolid::draw() { closedPolygon.draw(); }
 void RevolutionSolid::drawNormal() { closedPolygon.drawNormal(); }
 
+/*
+ * Purpose    : Turns the curve function into a function which maps (x, y) -> (x, y, z) 
+ * Parameters : (float)                 leftT          := The left of the parametric range 
+ *				(float)                 rightT         := The right of the parametric range
+ *				(function<vec2(float)>) curveFunction  := The function describing the curve to revolution around the y-axis
+ *				(function<vec2(float)>) normalFunction := The function describing the normals of the curve
+ * Return     : (None)
+ */
 function<Vertex(int, int)> makeCurveFunction(float leftT, float rightT, function<glm::vec2(float)> curveFunction, function<glm::vec2(float)> normalFunction) {
 	
 	function<Vertex(int, int)> curveFunc = [=](int yStep, int thetaStep) {
@@ -59,14 +67,25 @@ function<Vertex(int, int)> makeCurveFunction(float leftT, float rightT, function
 	return curveFunc;
 }
 
+/*
+ * Purpose    : Initializes all of the values
+ * Parameters : (pair<float, float>)    domain         := The range of the parametric function 
+ *				(function<vec2(float)>) curveFunction  := The function describing the curve to revolution around the y-axis
+ *				(function<vec2(float)>) normalFunction := The function describing the normals of the curve
+ *				(bool)                  hasFlatTop     := If the top is flat or if it is a point 
+ *				(bool)                  hasFlatBottom  := If the bottom is flat or if it is a point
+ * Return     : (None)
+ */
 void RevolutionSolid::initialize(pair<float, float> domain, function<glm::vec2(float)> surfaceCurve, std::function<glm::vec2(float)> surfaceNormal,
 								 bool hasFlatTop, bool hasFlatBottom) {
+	// Sets the values for the revolution solid
 	leftT = domain.first, rightT = domain.second; 
 	curveFunction = surfaceCurve;
 	normalFunction = surfaceNormal; 
 	isFlatTop = hasFlatTop, isFlatBottom = hasFlatBottom;
 
-	float leftTResultY = curveFunction(leftT).y, 
+	// Call the closed and calculate everything for the closed dipole
+	float leftTResultY  = curveFunction(leftT).y, 
 		  rightTResultY = curveFunction(rightT).y;
 	Vertex topVertex    = Vertex(glm::vec3(0, rightTResultY, 0), glm::vec3(0,  1, 0));
 	Vertex bottomVertex = Vertex(glm::vec3(0, leftTResultY, 0), glm::vec3(0, -1, 0));
