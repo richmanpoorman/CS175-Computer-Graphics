@@ -86,6 +86,8 @@ void setTriangleFaces(Surface& surface, vector<vector<VertexID>>& verticies) {
 	}
 	
 }
+
+// Connects the top part of the polygon to the lower part using a function for the curve between the points
 void connectTopAndBottom(Surface& surface, vector<vector<VertexID>>& verticies, VertexID topVertex, VertexID bottomVertex, bool isTopFlat, bool isBottomFlat) {
 
 	vector<VertexID> topRow = verticies.back(), // Note that the top is when the rows are at the highest
