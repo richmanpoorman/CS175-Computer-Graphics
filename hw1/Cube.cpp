@@ -11,11 +11,16 @@
 
 using namespace std;
 
-
+/* constructor
+*
+* builds and tesselates the cube, initially
+*/
 Cube::Cube() {
     tessellate();
 }
 
+/* destructor 
+*/
 Cube::~Cube() {}
 
 /* tessellate 
@@ -90,12 +95,24 @@ void Cube::tessellate() {
         }
     }
 
-
+/* draw
+*
+* tessellates the cube and then draws
+* the triangles connecting all the 
+* vertices 
+*
+*/
 void Cube::draw() {
     tessellate();
     surface.draw();
 }
 
+/* drawNormal
+*
+* tesselates the cube and then draws the 
+* normal vectors off each vertex in the cube
+*
+*/
 void Cube::drawNormal() {
     tessellate();
     surface.drawNormal();

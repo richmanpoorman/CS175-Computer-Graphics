@@ -25,12 +25,33 @@ glm::vec2 sphereNormal(float t) {
     return sphereCurve(t);
 }
 
+/* constructor
+*
+* provides the domain, surface curve, and 
+* normal curve to draw a sphere as a 
+* RevolutionSolid object
+*
+*/
 Sphere::Sphere() {
 	sphere = RevolutionSolid({PI, 0}, &sphereCurve, &sphereNormal);
 };
 
+/* destructor
+*/
 Sphere::~Sphere() {};
 
+/* draw
+*
+* tessellates the sphere and then draws
+* the triangles connecting all the 
+* vertices 
+*/
 void Sphere::draw() { sphere.draw(); }
 
+/* drawNormal
+*
+* tessellates the cube and then draws the 
+* normal vectors off each vertex in the sphere
+*
+*/
 void Sphere::drawNormal() { sphere.drawNormal(); }
