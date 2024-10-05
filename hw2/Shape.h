@@ -16,7 +16,8 @@ enum OBJ_TYPE {
     SHAPE_SPECIAL1 = 4,
     SHAPE_SPECIAL2 = 5,
     SHAPE_SPECIAL3 = 6,
-    SHAPE_MESH     = 7
+    SHAPE_MESH     = 7,
+    SHAPE_SCENE = 8
 };
 
 class Shape {
