@@ -250,7 +250,7 @@ void flattenTraversal(SceneNode* current, glm::mat4 &transformations, vector<pai
 	glm::mat4 newMatrix = transformations * nodeTransformation; 
 
 	for (ScenePrimitive* primitive : primitives) {
-		Shape shape = primitiveToShape(primitive);
+		Shape *shape = primitiveToShape(primitive);
 		pair<Shape, glm::mat4> primitivePair = make_pair(shape, newMatrix);
 		result.push_back(primitivePair);
 	}
@@ -260,6 +260,35 @@ void flattenTraversal(SceneNode* current, glm::mat4 &transformations, vector<pai
 	}
 }
 
+/* primitiveToShape
+*
+* creates actual Shapes from their primitives 
+*/
+Shape MyGLCanvas::primitiveToShape(ScenePrimitive* primitive) {
+
+	Shape *shape = nullptr;
+
+	switch (primitive->type) {
+		case SHAPE_CUBE:
+			Cube *cube;
+			cube = new Cube();
+			shape = cube;
+		case SHAPE_CYLINDER:
+			Cylinder *cylinder;
+			cylinder = new Cylinder();
+			shape = cylinder;
+		case SHAPE_CONE:
+			Cone *cone;
+			cone = new Cone();
+			shape = cone;
+		case SHAPE_SPHERE:
+			Sphere *sphere;
+			sphere = new Sphere();
+			shape = sphere;
+	}	
+	
+	return shape;
+}
 void MyGLCanvas::drawScene() {
 	if (parser == NULL) {
 		return;
