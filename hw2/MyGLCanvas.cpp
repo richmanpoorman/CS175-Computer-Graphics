@@ -230,6 +230,7 @@ glm::mat4 SceneTransf_to_Matrix(SceneTransformation transf) {
 	default:
 		std::cout << "what";
 	}
+}
 
 // TODO: Our function to traverse the parser's output
 vector<pair<Shape, glm::mat4>> flattenSceneGraph(SceneNode* root) {
