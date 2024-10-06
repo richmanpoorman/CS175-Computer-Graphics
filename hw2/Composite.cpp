@@ -11,7 +11,7 @@ using namespace std;
 */
 Composite::Composite() {
 
-    // populate the shapes vector with subshape surfaces
+    // populate the shapes vector with surfaces
 
 
 }
@@ -30,16 +30,13 @@ Composite::~Composite() {}
 */
 void Composite::draw() {
 
-    
-    
     // iterate through shapes and draw them in the correct position
     for (int i = 0; i < shapes.size(); i++) {
+        glPushMatrix();
+
         // note: glMultMatrixf allows us to apply
         // the current transformation on
         // top of the ones already on the stack
-
-        glPushMatrix();
-
         // apply respective transformation matrix, then draw
         glMultMatrixf(glm::value_ptr(transMatrices[i]));
         shapes[i].draw();
@@ -59,12 +56,14 @@ void Composite::draw() {
 */
 void Composite::drawNormal() {
 
-    glPushMatrix();
-
     for (int i = 0; i < shapes.size(); i++) {
-        // compound each transform matrix
+        glPushMatrix();
+
+        // apply respective transformation matrix, then draw
         glMultMatrixf(glm::value_ptr(transMatrices[i]));
         shapes[i].drawNormal();
+
+        glPopMatrix();
     }
-    glPopMatrix();
+    
 }
