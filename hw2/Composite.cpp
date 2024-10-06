@@ -10,6 +10,8 @@ using namespace std;
 */
 Composite::Composite() {
 
+    // populate the shapes vector with subshape surfaces
+
 }
 
 /* destructor
@@ -20,22 +22,19 @@ Composite::~Composite() {}
 
 /* draw
 *
-* applies the composite shape's
-* transform matrix before 
-* drawing all sub-shapes
+* accumulates the transform matrices and
+* draws all the sub-shapes in a composite shape
 *
 */
 void Composite::draw() {
 
     glPushMatrix();
 
-    // glMultMatrixf allows us to apply
-    // the current transformation
-    // on top of the ones already on the stack
-    glMultMatrixf(glm::value_ptr(transMatrix))
-
-    // draw all the sub-shapes in this composite shape
     (for int i = 0; i < shapes.size(); i++) {
+        // note: glMultMatrixf allows us to apply
+        // the current transformation on
+        // top of the ones already on the stack
+        glMultMatrixf(glm::value_ptr(transMatrices[i]));
         shapes[i].draw();
     }
 
@@ -60,20 +59,18 @@ void Composite::draw() {
 
 /* drawNormal
 *
-* applies the composite shape's
-* transform matrix before 
-* drawing the normals of all sub-shapes
+* accumulates the transform matrices and
+* draws all the sub-shapes' normals
+* in a composite shape
 *
 */
 void Composite::drawNormal() {
 
     glPushMatrix();
 
-    // apply this composite shape's transformation
-    glMultMatrixf(glm::value_ptr(transMatrix))
-
-    // draw all the sub-shapes' normals
     (for int i = 0; i < shapes.size(); i++) {
+        // compound each transform matrix
+        glMultMatrixf(glm::value_ptr(transMatrices[i]))
         shapes[i].drawNormal();
     }
     glPopMatrix();
