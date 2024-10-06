@@ -31,7 +31,7 @@ void Composite::draw() {
 
     glPushMatrix();
 
-    (for int i = 0; i < shapes.size(); i++) {
+    for (int i = 0; i < shapes.size(); i++) {
         // note: glMultMatrixf allows us to apply
         // the current transformation on
         // top of the ones already on the stack
@@ -69,7 +69,7 @@ void Composite::drawNormal() {
 
     glPushMatrix();
 
-    (for int i = 0; i < shapes.size(); i++) {
+    for (int i = 0; i < shapes.size(); i++) {
         // compound each transform matrix
         glMultMatrixf(glm::value_ptr(transMatrices[i]));
         shapes[i].drawNormal();
