@@ -8,9 +8,8 @@
 #include <unordered_map>
 #include <unordered_set>
 
-#define VertexID int 
-#define FaceID int
-
+typedef int VertexID;
+typedef int FaceID;
 
 class Vertex {
 public:
