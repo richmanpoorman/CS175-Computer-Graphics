@@ -20,7 +20,7 @@ public:
 
 private:
 	vector<Surface> shapes;
-	glm::mat4 transMatrix;
+	vector<glm::mat4> transMatrices;
 };
 
 #endif

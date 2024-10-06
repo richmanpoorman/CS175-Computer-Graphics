@@ -26,18 +26,19 @@ Composite::~Composite() {}
 *
 */
 void Composite::draw() {
+    // iterate through shapes and draw them in the correct position
+    for (int i = 0; i < shapes.length(); i++) {
+        // transformation for each shape
+        glPushMatrix();
+        
+        // apply respective transformation matrix, then draw
+        // transMatrices[i];
+        // gl translate, rotate, scale, translate respectively each shape.
 
-    glPushMatrix();
-
-    // apply the current composite transform 
-    glMultMatrixf(glm::value_ptr(transMatrix))
-
-    // draw all the shapes
-    (for int i = 0; i < shapes.size(); i++) {
         shapes[i].draw();
-    }
-    glPopMatrix();
 
+        glPopMatrix();
+    }
 }
 
 /* drawNormal
