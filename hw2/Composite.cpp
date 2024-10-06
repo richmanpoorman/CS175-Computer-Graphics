@@ -1,6 +1,7 @@
 #include "Composite.h"
 #include "Shape.h"
 #include <iostream>
+#include <glm/gtc/type_ptr.hpp>
 
 using namespace std;
 
@@ -29,33 +30,24 @@ Composite::~Composite() {}
 */
 void Composite::draw() {
 
-    glPushMatrix();
-
+    
+    
+    // iterate through shapes and draw them in the correct position
     for (int i = 0; i < shapes.size(); i++) {
         // note: glMultMatrixf allows us to apply
         // the current transformation on
         // top of the ones already on the stack
+
+        glPushMatrix();
+
+        // apply respective transformation matrix, then draw
         glMultMatrixf(glm::value_ptr(transMatrices[i]));
         shapes[i].draw();
+
+        glPopMatrix();
     }
 
-    glPopMatrix();
 
-
-    // // iterate through shapes and draw them in the correct position
-    // for (int i = 0; i < shapes.length(); i++) {
-
-    //     // transformation for each shape
-    //     glPushMatrix();
-        
-    //     // apply respective transformation matrix, then draw
-    //     // transMatrices[i];
-    //     // gl translate, rotate, scale, translate respectively each shape.
-
-    //     shapes[i].draw();
-
-    //     glPopMatrix();
-    // }
 }
 
 /* drawNormal
