@@ -13,7 +13,6 @@ public:
 		return SHAPE_SCENE;
 	}
 
-
 	void draw();
 	void drawNormal();
 

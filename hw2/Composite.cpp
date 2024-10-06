@@ -12,6 +12,7 @@ Composite::Composite() {
 
     // populate the shapes vector with subshape surfaces
 
+
 }
 
 /* destructor
@@ -70,7 +71,7 @@ void Composite::drawNormal() {
 
     (for int i = 0; i < shapes.size(); i++) {
         // compound each transform matrix
-        glMultMatrixf(glm::value_ptr(transMatrices[i]))
+        glMultMatrixf(glm::value_ptr(transMatrices[i]));
         shapes[i].drawNormal();
     }
     glPopMatrix();
