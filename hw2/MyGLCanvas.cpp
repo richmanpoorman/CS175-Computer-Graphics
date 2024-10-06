@@ -3,6 +3,9 @@
 #include "MyGLCanvas.h"
 #include "glm/ext.hpp"
 #include "glm/gtx/string_cast.hpp"
+#include <vector>
+
+using namespace std;
 
 int Shape::m_segmentsX;
 int Shape::m_segmentsY;
@@ -228,6 +231,32 @@ glm::mat4 SceneTransf_to_Matrix(SceneTransformation transf) {
 		std::cout << "what";
 	}
 
+// TODO: Our function to traverse the parser's output
+vector<pair<Shape, glm::mat4>> flattenSceneGraph(SceneNode* root) {
+	if (root == nullptr) return {};
+	vector<pair<Shape, glm::mat4>> result = vector<pair<Shape, glm::mat4>>();
+	glm::mat4 transform = glm::mat4(1.0f);
+	flattenTraversal(root, transform, result);
+	return result;
+}
+
+void flattenTraversal(SceneNode* current, glm::mat4 &transformations, vector<pair<Shape, glm::mat4>>& result) {
+	vector<SceneNode*> children = current->children; 
+	vector<ScenePrimitive*> primitives = current->primitives;
+	vector<SceneTransformation*> currentTransformations = current->transformations;
+
+	glm::mat4 nodeTransformation = SceneTransf_to_Matrix(currentTransformations);
+	glm::mat4 newMatrix = transformations * nodeTransformation; 
+
+	for (ScenePrimitive* primitive : primitives) {
+		Shape shape = primitiveToShape(primitive);
+		pair<Shape, glm::mat4> primitivePair = make_pair(shape, newMatrix);
+		result.push_back(primitivePair);
+	}
+
+	for (SceneNode *child : children) {
+		flattenTraversal(child, newMatrix, result);
+	}
 }
 
 void MyGLCanvas::drawScene() {
