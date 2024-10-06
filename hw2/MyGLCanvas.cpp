@@ -1,6 +1,8 @@
 #define NUM_OPENGL_LIGHTS 8
 
 #include "MyGLCanvas.h"
+#include "glm/ext.hpp"
+#include "glm/gtx/string_cast.hpp"
 
 int Shape::m_segmentsX;
 int Shape::m_segmentsY;
@@ -208,6 +210,24 @@ void MyGLCanvas::drawObject(OBJ_TYPE type) {
 		glColor3f(0.5f, 0.5f, 0.5f);
 		renderShape(objType);
 	}
+}
+
+
+glm::mat4 SceneTransf_to_Matrix(SceneTransformation transf) {
+	switch (transf.type) {
+	case TRANSFORMATION_TRANSLATE:
+		cout << glm::to_string(transf.matrix) << endl;
+	case  TRANSFORMATION_SCALE:
+		cout << glm::to_string(transf.matrix) << endl;
+	case TRANSFORMATION_ROTATE:
+		cout << glm::to_string(transf.matrix) << endl;
+	case TRANSFORMATION_MATRIX:
+		// wtf are you
+		cout << glm::to_string(transf.matrix) << endl;
+	default:
+		std::cout << "what";
+	}
+
 }
 
 void MyGLCanvas::drawScene() {
