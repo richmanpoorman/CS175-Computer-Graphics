@@ -213,7 +213,7 @@ void MyGLCanvas::drawObject(OBJ_TYPE type) {
 	}
 }
 
-
+// TODO: Our function to traverse the parser's output
 vector<pair<Shape, glm::mat4>> flattenSceneGraph(SceneNode* root) {
 	if (root == nullptr) return {};
 	vector<pair<Shape, glm::mat4>> result = vector<pair<Shape, glm::mat4>>();
