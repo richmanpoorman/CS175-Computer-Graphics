@@ -4,6 +4,8 @@
 #include "Shape.h"
 #include "Geometry.h"
 
+using namespace std;
+
 class Composite : public Shape {
 public:
 	Composite();
