@@ -1,6 +1,9 @@
 #define NUM_OPENGL_LIGHTS 8
 
 #include "MyGLCanvas.h"
+#include <vector>
+
+using namespace std;
 
 int Shape::m_segmentsX;
 int Shape::m_segmentsY;
@@ -207,6 +210,34 @@ void MyGLCanvas::drawObject(OBJ_TYPE type) {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		glColor3f(0.5f, 0.5f, 0.5f);
 		renderShape(objType);
+	}
+}
+
+
+vector<pair<Shape, glm::mat4>> flattenSceneGraph(SceneNode* root) {
+	if (root == nullptr) return {};
+	vector<pair<Shape, glm::mat4>> result = vector<pair<Shape, glm::mat4>>();
+	glm::mat4 transform = glm::mat4(1.0f);
+	flattenTraversal(root, transform, result);
+	return result;
+}
+
+void flattenTraversal(SceneNode* current, glm::mat4 &transformations, vector<pair<Shape, glm::mat4>>& result) {
+	vector<SceneNode*> children = current->children; 
+	vector<ScenePrimitive*> primitives = current->primitives;
+	vector<SceneTransformation*> currentTransformations = current->transformations;
+
+	glm::mat4 nodeTransformation = SceneTransf_to_Matrix(currentTransformations);
+	glm::mat4 newMatrix = transformations * nodeTransformation; 
+
+	for (ScenePrimitive* primitive : primitives) {
+		Shape shape = primitiveToShape(primitive);
+		pair<Shape, glm::mat4> primitivePair = make_pair(shape, newMatrix);
+		result.push_back(primitivePair);
+	}
+
+	for (SceneNode *child : children) {
+		flattenTraversal(child, newMatrix, result);
 	}
 }
 
