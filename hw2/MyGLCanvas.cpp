@@ -221,25 +221,30 @@ void MyGLCanvas::drawObject(OBJ_TYPE type) {
 */
 Shape *primitiveToShape(ScenePrimitive* primitive) {
 
-	Shape *shape;
+	Shape *subshape;
 
-	switch (primitive->type) {
+	OBJ_TYPE type = primitive->type;
+	switch (type) {
 		case SHAPE_CUBE:
 			Cube *cube;
 			cube = new Cube();
-			shape = cube;
+			subshape = cube;
+			break;
 		case SHAPE_CYLINDER:
 			Cylinder *cylinder;
 			cylinder = new Cylinder();
-			shape = cylinder;
+			subshape = cylinder;
+			break;
 		case SHAPE_CONE:
 			Cone *cone;
 			cone = new Cone();
-			shape = cone;
+			subshape = cone;
+			break;
 		case SHAPE_SPHERE:
 			Sphere *sphere;
 			sphere = new Sphere();
-			shape = sphere;
+			subshape = sphere;
+			break;
 		default:
 			return nullptr;
 
