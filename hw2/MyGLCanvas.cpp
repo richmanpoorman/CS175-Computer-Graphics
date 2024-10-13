@@ -1,8 +1,6 @@
 #define NUM_OPENGL_LIGHTS 8
 
 #include "MyGLCanvas.h"
-#include "glm/ext.hpp"
-#include "glm/gtx/string_cast.hpp"
 #include <vector>
 
 using namespace std;
@@ -271,14 +269,7 @@ glm::mat4 SceneTransf_to_Matrix(vector<SceneTransformation*> transf) {
 	return glm::mat4(1.0f);
 }
 
-// TODO: Our function to traverse the parser's output
-vector<pair<Shape, glm::mat4>> flattenSceneGraph(SceneNode* root) {
-	if (root == nullptr) return {};
-	vector<pair<Shape, glm::mat4>> result = vector<pair<Shape, glm::mat4>>();
-	glm::mat4 transform = glm::mat4(1.0f);
-	flattenTraversal(root, transform, result);
-	return result;
-}
+
 
 void flattenTraversal(SceneNode* current, glm::mat4 &transformations, vector<pair<Shape, glm::mat4>>& result) {
 	vector<SceneNode*> children = current->children; 
@@ -297,6 +288,15 @@ void flattenTraversal(SceneNode* current, glm::mat4 &transformations, vector<pai
 	for (SceneNode *child : children) {
 		flattenTraversal(child, newMatrix, result);
 	}
+}
+
+// TODO: Our function to traverse the parser's output
+vector<pair<Shape, glm::mat4>> flattenSceneGraph(SceneNode* root) {
+	if (root == nullptr) return {};
+	vector<pair<Shape, glm::mat4>> result = vector<pair<Shape, glm::mat4>>();
+	glm::mat4 transform = glm::mat4(1.0f);
+	flattenTraversal(root, transform, result);
+	return result;
 }
 
 void MyGLCanvas::drawScene() {
