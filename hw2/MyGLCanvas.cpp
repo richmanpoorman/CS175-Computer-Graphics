@@ -250,24 +250,25 @@ Shape *primitiveToShape(ScenePrimitive* primitive) {
 
 	}	
 	
-	return shape;
+	return subshape;
 }
 
 
-glm::mat4 SceneTransf_to_Matrix(SceneTransformation transf) {
-	switch (transf.type) {
-	case TRANSFORMATION_TRANSLATE:
-		cout << glm::to_string(transf.matrix) << endl;
-	case  TRANSFORMATION_SCALE:
-		cout << glm::to_string(transf.matrix) << endl;
-	case TRANSFORMATION_ROTATE:
-		cout << glm::to_string(transf.matrix) << endl;
-	case TRANSFORMATION_MATRIX:
-		// wtf are you
-		cout << glm::to_string(transf.matrix) << endl;
-	default:
-		std::cout << "what";
-	}
+glm::mat4 SceneTransf_to_Matrix(vector<SceneTransformation*> transf) {
+	//switch ((&transf)[0].type) {
+	//case TRANSFORMATION_TRANSLATE:
+	//	cout << glm::to_string(transf[0].matrix) << endl;
+	//case  TRANSFORMATION_SCALE:
+	//	cout << glm::to_string(transf[0].matrix) << endl;
+	//case TRANSFORMATION_ROTATE:
+	//	cout << glm::to_string(transf[0].matrix) << endl;
+	//case TRANSFORMATION_MATRIX:
+	//	// wtf are you
+	//	cout << glm::to_string(transf[0].matrix) << endl;
+	//default:
+	//	std::cout << "what";
+	//}
+	return glm::mat4(1.0f);
 }
 
 // TODO: Our function to traverse the parser's output
@@ -289,7 +290,7 @@ void flattenTraversal(SceneNode* current, glm::mat4 &transformations, vector<pai
 
 	for (ScenePrimitive* primitive : primitives) {
 		Shape *shape = primitiveToShape(primitive);
-		pair<Shape, glm::mat4> primitivePair = make_pair(shape, newMatrix);
+		pair<Shape, glm::mat4> primitivePair = make_pair(*shape, newMatrix);
 		result.push_back(primitivePair);
 	}
 
