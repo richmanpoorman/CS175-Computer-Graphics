@@ -252,9 +252,10 @@ glm::mat4 SceneTransf_to_Matrix(vector<SceneTransformation*> transfs) {
 	glm::mat4 composite_matrix = glm::mat4(1.0f);
 	
 	for (SceneTransformation* t : transfs) {
+		cout << glm::to_string(t->matrix) << endl;
 		composite_matrix *= t->matrix;
 	}
-	cout << "Here" << endl;
+	cout << glm::to_string(composite_matrix) << endl;
 
 	return composite_matrix;
 }
@@ -305,7 +306,7 @@ void MyGLCanvas::drawScene() {
 	glm::mat4 compositeMatrix(1.0f);
 	flattenSceneGraph(root);
 
-	flattenSceneGraph(root);
+	vector<pair<Shape*, glm::mat4>> shapes_to_render = flattenSceneGraph(root);
 
 	if (wireframe) {
 		glColor3f(1.0, 1.0, 0.0);
@@ -332,7 +333,10 @@ void MyGLCanvas::drawScene() {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		//TODO: render the scene
 		// note that you should always applyMaterial first before drawing each geometry
-		
+		cout << "Here" << endl;
+		for (pair<Shape*, glm::mat4> shape : shapes_to_render) {
+			shape.first->draw();
+		}
 	}
 	glDisable(GL_LIGHTING);
 
