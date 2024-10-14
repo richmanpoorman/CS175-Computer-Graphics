@@ -255,21 +255,15 @@ Shape *primitiveToShape(ScenePrimitive* primitive) {
 }
 
 
-glm::mat4 SceneTransf_to_Matrix(vector<SceneTransformation*> transf) {
-	switch (transf[0]->type) {
-	case TRANSFORMATION_TRANSLATE:
-		cout << glm::to_string(transf[0]->matrix) << endl;
-	case  TRANSFORMATION_SCALE:
-		cout << glm::to_string(transf[0]->matrix) << endl;
-	case TRANSFORMATION_ROTATE:
-		cout << glm::to_string(transf[0]->matrix) << endl;
-	case TRANSFORMATION_MATRIX:
-		// wtf are you
-		cout << glm::to_string(transf[0]->matrix) << endl;
-	default:
-		std::cout << "what";
+glm::mat4 SceneTransf_to_Matrix(vector<SceneTransformation*> transfs) {
+	glm::mat4 composite_matrix = glm::mat4(1.0f);
+	cout << transfs[0]->type << endl;
+	
+	for (SceneTransformation* t : transfs) {
+		composite_matrix *= t->matrix;
 	}
-	return glm::mat4(1.0f);
+
+	return composite_matrix;
 }
 
 
