@@ -257,11 +257,11 @@ Shape *primitiveToShape(ScenePrimitive* primitive) {
 
 glm::mat4 SceneTransf_to_Matrix(vector<SceneTransformation*> transfs) {
 	glm::mat4 composite_matrix = glm::mat4(1.0f);
-	cout << transfs[0]->type << endl;
 	
 	for (SceneTransformation* t : transfs) {
 		composite_matrix *= t->matrix;
 	}
+	cout << "Here" << endl;
 
 	return composite_matrix;
 }
@@ -288,7 +288,7 @@ void flattenTraversal(SceneNode* current, glm::mat4 &transformations, vector<pai
 }
 
 // TODO: Our function to traverse the parser's output
-vector<pair<Shape*, glm::mat4>> flattenSceneGraph(SceneNode* root) {
+vector<pair<Shape*, glm::mat4>> flattenSceneGraph(SceneNode* root) {	
 	if (root == nullptr) return {};
 	vector<pair<Shape*, glm::mat4>> result = vector<pair<Shape*, glm::mat4>>();
 	glm::mat4 transform = glm::mat4(1.0f);
@@ -310,6 +310,8 @@ void MyGLCanvas::drawScene() {
 
 	SceneNode* root = parser->getRootNode();
 	glm::mat4 compositeMatrix(1.0f);
+
+	flattenSceneGraph(root);
 
 	if (wireframe) {
 		glColor3f(1.0, 1.0, 0.0);
@@ -336,6 +338,7 @@ void MyGLCanvas::drawScene() {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		//TODO: render the scene
 		// note that you should always applyMaterial first before drawing each geometry
+		
 	}
 	glDisable(GL_LIGHTING);
 
