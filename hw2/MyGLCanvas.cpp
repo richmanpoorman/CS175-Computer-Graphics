@@ -2,6 +2,9 @@
 
 #include "MyGLCanvas.h"
 #include <vector>
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/string_cast.hpp> 
+
 
 using namespace std;
 
@@ -253,19 +256,19 @@ Shape *primitiveToShape(ScenePrimitive* primitive) {
 
 
 glm::mat4 SceneTransf_to_Matrix(vector<SceneTransformation*> transf) {
-	//switch ((&transf)[0].type) {
-	//case TRANSFORMATION_TRANSLATE:
-	//	cout << glm::to_string(transf[0].matrix) << endl;
-	//case  TRANSFORMATION_SCALE:
-	//	cout << glm::to_string(transf[0].matrix) << endl;
-	//case TRANSFORMATION_ROTATE:
-	//	cout << glm::to_string(transf[0].matrix) << endl;
-	//case TRANSFORMATION_MATRIX:
-	//	// wtf are you
-	//	cout << glm::to_string(transf[0].matrix) << endl;
-	//default:
-	//	std::cout << "what";
-	//}
+	switch (transf[0]->type) {
+	case TRANSFORMATION_TRANSLATE:
+		cout << glm::to_string(transf[0]->matrix) << endl;
+	case  TRANSFORMATION_SCALE:
+		cout << glm::to_string(transf[0]->matrix) << endl;
+	case TRANSFORMATION_ROTATE:
+		cout << glm::to_string(transf[0]->matrix) << endl;
+	case TRANSFORMATION_MATRIX:
+		// wtf are you
+		cout << glm::to_string(transf[0]->matrix) << endl;
+	default:
+		std::cout << "what";
+	}
 	return glm::mat4(1.0f);
 }
 
