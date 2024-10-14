@@ -222,36 +222,29 @@ void MyGLCanvas::drawObject(OBJ_TYPE type) {
 */
 Shape *primitiveToShape(ScenePrimitive* primitive) {
 
-	Shape *subshape;
-
 	OBJ_TYPE type = primitive->type;
 	switch (type) {
 		case SHAPE_CUBE:
 			Cube *cube;
 			cube = new Cube();
-			subshape = cube;
-			break;
+			return cube;
 		case SHAPE_CYLINDER:
 			Cylinder *cylinder;
 			cylinder = new Cylinder();
-			subshape = cylinder;
-			break;
+			return cylinder;
 		case SHAPE_CONE:
 			Cone *cone;
 			cone = new Cone();
-			subshape = cone;
-			break;
+			return cone;
 		case SHAPE_SPHERE:
 			Sphere *sphere;
 			sphere = new Sphere();
-			subshape = sphere;
-			break;
+			return sphere;
 		default:
 			return nullptr;
 
 	}	
 	
-	return subshape;
 }
 
 
@@ -316,6 +309,7 @@ void MyGLCanvas::drawScene() {
 
 	SceneNode* root = parser->getRootNode();
 	glm::mat4 compositeMatrix(1.0f);
+	flattenSceneGraph(root);
 
 	if (wireframe) {
 		glColor3f(1.0, 1.0, 0.0);
