@@ -247,22 +247,45 @@ Shape *primitiveToShape(ScenePrimitive* primitive) {
 	
 }
 
-
+/* combines all of an object's scene transformations into a composite
+* transformation matrix */
 glm::mat4 SceneTransf_to_Matrix(vector<SceneTransformation*> transfs) {
-	glm::mat4 composite_matrix = glm::mat4(1.0f);
-	
-	for (SceneTransformation* t : transfs) {
-		cout << glm::to_string(t->matrix) << endl;
-		composite_matrix *= t->matrix;
-	}
-	cout << glm::to_string(composite_matrix) << endl;
 
+	glm::mat4 composite_matrix = glm::mat4(1.0f);
+
+	/* determine the type of transformation, and apply
+	* it to the cumulative composite transform */
+	for (SceneTransformation* t : transfs) {
+		// cout << glm::to_string(t->matrix) << endl;
+		// composite_matrix *= t->matrix;
+		switch (t->type) {
+			case TRANSFORMATION_TRANSLATE:
+				composite_matrix = glm::translate(composite_matrix, t->translate);
+				break;
+			case TRANSFORMATION_SCALE:
+				composite_matrix = glm::scale(composite_matrix, t->scale);
+				break;
+			case TRANSFORMATION_ROTATE:
+				composite_matrix = glm::rotate(composite_matrix, t->angle, t->rotate);
+				break;
+			case TRANSFORMATION_MATRIX:
+				composite_matrix *= t->matrix;
+				break;
+			default:
+				break;
+		}
+		// cout << glm::to_string(composite_matrix) << endl;
+	}
+	// cout << glm::to_string(composite_matrix) << endl;
 	return composite_matrix;
 }
 
-
-
+/* accepts a pointer to a scene node, a matrix of
+* cumulative transformations so far, and a vector 
+* of pairs of shapes to their composite matrices
+*/
 void flattenTraversal(SceneNode* current, glm::mat4 &transformations, vector<pair<Shape*, glm::mat4>>& result) {
+
 	vector<SceneNode*> children = current->children; 
 	vector<ScenePrimitive*> primitives = current->primitives;
 	vector<SceneTransformation*> currentTransformations = current->transformations;
@@ -279,9 +302,15 @@ void flattenTraversal(SceneNode* current, glm::mat4 &transformations, vector<pai
 	for (SceneNode *child : children) {
 		flattenTraversal(child, newMatrix, result);
 	}
+
 }
 
 // TODO: Our function to traverse the parser's output
+/* flattenSceneGraph
+* accepts a pointer to the root node of the scene graph and
+* converts the scene data into a 1-D array of scene objects.
+* each entry in the array is a pair linking a primitive Shape
+* object to its composite transform matrix */
 vector<pair<Shape*, glm::mat4>> flattenSceneGraph(SceneNode* root) {	
 	if (root == nullptr) return {};
 	vector<pair<Shape*, glm::mat4>> result = vector<pair<Shape*, glm::mat4>>();
@@ -303,8 +332,8 @@ void MyGLCanvas::drawScene() {
 	}
 
 	SceneNode* root = parser->getRootNode();
-	glm::mat4 compositeMatrix(1.0f);
-	flattenSceneGraph(root);
+	// glm::mat4 compositeMatrix(1.0f);
+	// flattenSceneGraph(root);
 
 	vector<pair<Shape*, glm::mat4>> shapes_to_render = flattenSceneGraph(root);
 
@@ -314,6 +343,18 @@ void MyGLCanvas::drawScene() {
 		glDisable(GL_POLYGON_OFFSET_FILL);
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		//TODO: draw wireframe of the scene
+
+		/* attempted this, to no avail */
+		// for (pair<Shape*, glm::mat4> shape : shapes_to_render) {
+		// 	glPushMatrix();
+		// 	glLoadMatrixf(glm::value_ptr(shape.second));
+		// 	shape.first->draw();
+		// 	glPopMatrix();
+		// }
+
+		for (pair<Shape*, glm::mat4> shape : shapes_to_render) {
+			shape.first->draw();
+		}
 		// note that you don't need to applyMaterial, just draw the geometry
 		glEnable(GL_LIGHTING);
 	}
