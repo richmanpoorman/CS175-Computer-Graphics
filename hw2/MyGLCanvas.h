@@ -20,6 +20,11 @@
 #include "Camera.h"
 #include "scene/SceneParser.h"
 
+struct ShapeData {
+	Shape* shape;
+	glm::mat4 transformation;
+	SceneMaterial material;
+};
 
 class MyGLCanvas : public Fl_Gl_Window {
 public:
@@ -61,6 +66,11 @@ private:
 	void updateCamera(int width, int height);
 	void setLight(const SceneLightData &light);
 	void applyMaterial(const SceneMaterial &material);
+
+	std::vector<ShapeData> flattenSceneGraph(SceneNode* root);
+	void flattenTraversal(SceneNode* current, glm::mat4& transformations, std::vector<ShapeData>& result);
+	glm::mat4 SceneTransf_to_Matrix(std::vector<SceneTransformation*> transfs); 
+	Shape* primitiveToShape(ScenePrimitive* primitive);
 };
 
 #endif // !MYGLCANVAS_H
