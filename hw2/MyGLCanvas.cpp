@@ -11,6 +11,13 @@ using namespace std;
 int Shape::m_segmentsX;
 int Shape::m_segmentsY;
 
+
+struct ShapeData {
+	Shape* shape;
+	glm::mat4 transformation; 
+	SceneMaterial material; 
+};
+
 MyGLCanvas::MyGLCanvas(int x, int y, int w, int h, const char *l) : Fl_Gl_Window(x, y, w, h, l) {
 	mode(FL_RGB | FL_ALPHA | FL_DEPTH | FL_DOUBLE);
 	
@@ -290,7 +297,7 @@ glm::mat4 SceneTransf_to_Matrix(vector<SceneTransformation*> transfs) {
 * cumulative transformations so far, and a vector 
 * of pairs of shapes to their composite matrices
 */
-void flattenTraversal(SceneNode* current, glm::mat4 &transformations, vector<pair<Shape*, glm::mat4>>& result) {
+void flattenTraversal(SceneNode* current, glm::mat4 &transformations, vector<ShapeData>& result) {
 
 	vector<SceneNode*> children = current->children; 
 	vector<ScenePrimitive*> primitives = current->primitives;
@@ -301,8 +308,11 @@ void flattenTraversal(SceneNode* current, glm::mat4 &transformations, vector<pai
 
 	for (ScenePrimitive* primitive : primitives) {
 		Shape *shape = primitiveToShape(primitive);
-		pair<Shape*, glm::mat4> primitivePair = make_pair(shape, newMatrix);
-		result.push_back(primitivePair);
+		SceneMaterial material = primitive->material;
+		ShapeData data = {
+			shape, newMatrix, material
+		};
+		result.push_back(data);
 	}
 
 	for (SceneNode *child : children) {
@@ -317,9 +327,9 @@ void flattenTraversal(SceneNode* current, glm::mat4 &transformations, vector<pai
 * converts the scene data into a 1-D array of scene objects.
 * each entry in the array is a pair linking a primitive Shape
 * object to its composite transform matrix */
-vector<pair<Shape*, glm::mat4>> flattenSceneGraph(SceneNode* root) {	
+vector<ShapeData> flattenSceneGraph(SceneNode* root) {	
 	if (root == nullptr) return {};
-	vector<pair<Shape*, glm::mat4>> result = vector<pair<Shape*, glm::mat4>>();
+	vector<ShapeData> result = vector<ShapeData>();
 	glm::mat4 transform = glm::mat4(1.0f);
 	flattenTraversal(root, transform, result);
 	return result;
@@ -341,7 +351,7 @@ void MyGLCanvas::drawScene() {
 	// glm::mat4 compositeMatrix(1.0f);
 	// flattenSceneGraph(root);
 
-	vector<pair<Shape*, glm::mat4>> shapes_to_render = flattenSceneGraph(root);
+	vector<ShapeData> shapes_to_render = flattenSceneGraph(root);
 
 	if (wireframe) {
 		glColor3f(1.0, 1.0, 0.0);
@@ -350,13 +360,13 @@ void MyGLCanvas::drawScene() {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		//TODO: draw wireframe of the scene
 
-		for (pair<Shape*, glm::mat4> shapeTransformPair : shapes_to_render) {
-			Shape*    shape          = shapeTransformPair.first; 
-			glm::mat4 transformation = shapeTransformPair.second; 
+		for (ShapeData data : shapes_to_render) {
+			Shape*    shape          = data.shape; 
+			glm::mat4 transformation = data.transformation; 
 			glPushMatrix();
 			glMultMatrixf(glm::value_ptr(transformation));
 			shape->draw();
-			cout << "Shape: " << shape->getType() << endl;
+			//cout << "Shape: " << shape->getType() << endl;
 			glPopMatrix(); 
 	
 		}
@@ -369,9 +379,6 @@ void MyGLCanvas::drawScene() {
 		// 	glPopMatrix();
 		// }
 
-		for (pair<Shape*, glm::mat4> shape : shapes_to_render) {
-			shape.first->draw();
-		}
 		// note that you don't need to applyMaterial, just draw the geometry
 		glEnable(GL_LIGHTING);
 	}
@@ -391,16 +398,16 @@ void MyGLCanvas::drawScene() {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		//TODO: render the scene
 		// note that you should always applyMaterial first before drawing each geometry
-		for (pair<Shape*, glm::mat4> shapeTransformPair : shapes_to_render) {
-			Shape* shape = shapeTransformPair.first;
-			glm::mat4 transformation = shapeTransformPair.second;
+		for (ShapeData data : shapes_to_render) {
+			Shape* shape = data.shape;
+			glm::mat4 transformation = data.transformation;
+			SceneMaterial material = data.material;
+
 			glPushMatrix();
-
+			applyMaterial(material);
 			glMultMatrixf(glm::value_ptr(transformation));
-			
 			shape->draw();
-			cout << "Shape: " << shape->getType() << endl;
-
+			//cout << "Shape: " << shape->getType() << endl;
 			glPopMatrix();
 
 		}
