@@ -12,11 +12,7 @@ int Shape::m_segmentsX;
 int Shape::m_segmentsY;
 
 
-struct ShapeData {
-	Shape* shape;
-	glm::mat4 transformation; 
-	SceneMaterial material; 
-};
+
 
 MyGLCanvas::MyGLCanvas(int x, int y, int w, int h, const char *l) : Fl_Gl_Window(x, y, w, h, l) {
 	mode(FL_RGB | FL_ALPHA | FL_DEPTH | FL_DOUBLE);
@@ -227,25 +223,17 @@ void MyGLCanvas::drawObject(OBJ_TYPE type) {
 *
 * creates actual Shapes from their primitives 
 */
-Shape *primitiveToShape(ScenePrimitive* primitive) {
+Shape *MyGLCanvas::primitiveToShape(ScenePrimitive* primitive) {
 
 	OBJ_TYPE type = primitive->type;
 	switch (type) {
 		case SHAPE_CUBE:
-			Cube *cube;
-			cube = new Cube();
 			return cube;
 		case SHAPE_CYLINDER:
-			Cylinder *cylinder;
-			cylinder = new Cylinder();
 			return cylinder;
 		case SHAPE_CONE:
-			Cone *cone;
-			cone = new Cone();
 			return cone;
 		case SHAPE_SPHERE:
-			Sphere *sphere;
-			sphere = new Sphere();
 			return sphere;
 		default:
 			return nullptr;
@@ -256,7 +244,7 @@ Shape *primitiveToShape(ScenePrimitive* primitive) {
 
 /* combines all of an object's scene transformations into a composite
 * transformation matrix */
-glm::mat4 SceneTransf_to_Matrix(vector<SceneTransformation*> transfs) {
+glm::mat4 MyGLCanvas::SceneTransf_to_Matrix(vector<SceneTransformation*> transfs) {
 
 	glm::mat4 composite_matrix = glm::mat4(1.0f);
 	
@@ -297,7 +285,7 @@ glm::mat4 SceneTransf_to_Matrix(vector<SceneTransformation*> transfs) {
 * cumulative transformations so far, and a vector 
 * of pairs of shapes to their composite matrices
 */
-void flattenTraversal(SceneNode* current, glm::mat4 &transformations, vector<ShapeData>& result) {
+void MyGLCanvas::flattenTraversal(SceneNode* current, glm::mat4 &transformations, vector<ShapeData>& result) {
 
 	vector<SceneNode*> children = current->children; 
 	vector<ScenePrimitive*> primitives = current->primitives;
@@ -327,7 +315,7 @@ void flattenTraversal(SceneNode* current, glm::mat4 &transformations, vector<Sha
 * converts the scene data into a 1-D array of scene objects.
 * each entry in the array is a pair linking a primitive Shape
 * object to its composite transform matrix */
-vector<ShapeData> flattenSceneGraph(SceneNode* root) {	
+vector<ShapeData> MyGLCanvas::flattenSceneGraph(SceneNode* root) {
 	if (root == nullptr) return {};
 	vector<ShapeData> result = vector<ShapeData>();
 	glm::mat4 transform = glm::mat4(1.0f);
@@ -339,7 +327,7 @@ void MyGLCanvas::drawScene() {
 	if (parser == NULL) {
 		return;
 	}
-
+	setSegments();
 	glPushMatrix();
 
 	//disable all the lights, and then enable each one...
@@ -352,7 +340,8 @@ void MyGLCanvas::drawScene() {
 	// flattenSceneGraph(root);
 
 	vector<ShapeData> shapes_to_render = flattenSceneGraph(root);
-
+	cout << "Shape Segments X: " << Shape::m_segmentsX << endl;
+	cout << "Shape Segments Y: " << Shape::m_segmentsY << endl;
 	if (wireframe) {
 		glColor3f(1.0, 1.0, 0.0);
 		glDisable(GL_LIGHTING);
