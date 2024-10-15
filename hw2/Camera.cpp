@@ -108,8 +108,6 @@ glm::mat4 Camera::getProjectionMatrix() {
 	glm::vec4 translateVector = glm::vec4(-getEyePoint(), 1.0);
 	translateMatrix[3] = translateVector;
 
-	cout << glm::to_string(getScaleMatrix()) << endl;
-
 	glm::mat4 projMat4 = getUnhingeMatrix() * getScaleMatrix() * rotateMatrix * translateMatrix;
 	return projMat4;
 }
@@ -168,12 +166,12 @@ void Camera::rotate(glm::vec3 point, glm::vec3 axis, float degrees) {
 
 
 glm::vec3 Camera::getEyePoint() {
-	glm::vec3 eyeVec3(0.0f, 0.0f, -10.0f);
+	glm::vec3 eyeVec3(0.0f, 0.0f, -1.0f);
 	return eyeVec3;
 }
 
 glm::vec3 Camera::getLookVector() {
-	glm::vec3 lookVec3(0.0f, 0.0f, -1.0f);
+	glm::vec3 lookVec3(0.0f, 0.0f, 1.0f);
 	return lookVec3;
 }
 
