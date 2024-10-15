@@ -1,4 +1,9 @@
 #include "Camera.h"
+#include <iostream>
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/string_cast.hpp> 
+
+using namespace std;
 
 struct UVWVectors {
 	glm::vec3 u, v, w; 
@@ -37,8 +42,8 @@ void Camera::setRotUVW(float u, float v, float w) {
 
 
 UVWVectors uvwVectors(glm::vec3 lookVector, glm::vec3 upVector) {
-	glm::vec3 u = -glm::normalize(lookVector);
-	glm::vec3 w = glm::normalize(glm::cross(upVector, u));
+	glm::vec3 w = -glm::normalize(lookVector);
+	glm::vec3 u = glm::normalize(glm::cross(upVector, w));
 	glm::vec3 v = glm::cross(w, u);
 	return { u, v, w };
 }
@@ -98,10 +103,12 @@ glm::mat4 Camera::getProjectionMatrix() {
 	rotateMatrix[1] = glm::vec4(v, 0.0f);
 	rotateMatrix[2] = glm::vec4(w, 0.0f);
 	rotateMatrix = glm::transpose(rotateMatrix);
-
+	
 	glm::mat4 translateMatrix(1.0f);
 	glm::vec4 translateVector = glm::vec4(-getEyePoint(), 1.0);
 	translateMatrix[3] = translateVector;
+
+	cout << glm::to_string(getScaleMatrix()) << endl;
 
 	glm::mat4 projMat4 = getUnhingeMatrix() * getScaleMatrix() * rotateMatrix * translateMatrix;
 	return projMat4;
@@ -161,17 +168,17 @@ void Camera::rotate(glm::vec3 point, glm::vec3 axis, float degrees) {
 
 
 glm::vec3 Camera::getEyePoint() {
-	glm::vec3 eyeVec3(1.0f);
+	glm::vec3 eyeVec3(0.0f, 0.0f, -10.0f);
 	return eyeVec3;
 }
 
 glm::vec3 Camera::getLookVector() {
-	glm::vec3 lookVec3(0.0f, -1.0f, 0.0f);
+	glm::vec3 lookVec3(0.0f, 0.0f, -1.0f);
 	return lookVec3;
 }
 
 glm::vec3 Camera::getUpVector() {
-	glm::vec3 upVec3(0.0, 0.0, 1.0f);
+	glm::vec3 upVec3(0.0f, 1.0f, 0.0f);
 	return upVec3;
 }
 
