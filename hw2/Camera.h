@@ -62,6 +62,8 @@ private:
 	float nearPlane, farPlane;
 	int screenWidth, screenHeight;
 	float screenWidthRatio;
+	glm::vec3 lookVector;
+	glm::vec3 eyeVector; 
 };
 #endif
 

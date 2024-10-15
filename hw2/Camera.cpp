@@ -24,6 +24,10 @@ void Camera::reset() {
 	screenWidth = screenHeight = 200;
 	screenWidthRatio = 1.0f;
 	rotU = rotV = rotW = 0;
+
+	// ADDED LOOK/EYE VECTOR
+	lookVector = glm::vec3(0.0f, 0.0f, -1.0f);
+	eyeVector = glm::vec3(0.0f, 0.0f, 1.0f);
 }
 
 //called by main.cpp as a part of the slider callback for controlling rotation
@@ -150,29 +154,42 @@ glm::mat4 Camera::getModelViewMatrix() {
 
 
 void Camera::rotateV(float degrees) {
+	glm::vec3 v = uvwVectors(getLookVector(), getUpVector()).v;
+	glm::mat3 rotationMatrix = glm::rotate(glm::mat4(1.0f), PI * degrees / 180.0f, v);
+	lookVector = rotationMatrix * lookVector;
 }
 
 void Camera::rotateU(float degrees) {
+	glm::vec3 u = uvwVectors(getLookVector(), getUpVector()).u;
+	glm::mat3 rotationMatrix = glm::rotate(glm::mat4(1.0f), PI * degrees / 180.0f, u);
+	lookVector = rotationMatrix * lookVector;
 }
 
 void Camera::rotateW(float degrees) {
+	glm::vec3 w = uvwVectors(getLookVector(), getUpVector()).w;
+	glm::mat3 rotationMatrix = glm::rotate(glm::mat4(1.0f), PI * degrees / 180.0f, w);
+	lookVector = rotationMatrix * lookVector;
 }
 
 void Camera::translate(glm::vec3 v) {
+	glm::mat3 translationMatrix = glm::translate(glm::mat4(1.0f), v);
+	eyeVector = translationMatrix * eyeVector;
 }
 
 void Camera::rotate(glm::vec3 point, glm::vec3 axis, float degrees) {
+	glm::mat3 rotationMatrix = glm::rotate(glm::mat4(1.0f), PI * degrees / 180.0f, axis);
+	lookVector = rotationMatrix * lookVector;
 }
 
 
 glm::vec3 Camera::getEyePoint() {
-	glm::vec3 eyeVec3(0.0f, 0.0f, -1.0f);
-	return eyeVec3;
+	//glm::vec3 eyeVec3(0.0f, 0.0f, -1.0f);
+	return eyeVector;
 }
 
 glm::vec3 Camera::getLookVector() {
-	glm::vec3 lookVec3(0.0f, 0.0f, 1.0f);
-	return lookVec3;
+	//glm::vec3 lookVec3(0.0f, 0.0f, 1.0f);
+	return lookVector;
 }
 
 glm::vec3 Camera::getUpVector() {
