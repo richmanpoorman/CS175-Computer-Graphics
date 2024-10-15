@@ -40,23 +40,45 @@ void Camera::orientLookVec(glm::vec3 eyePoint, glm::vec3 lookVec, glm::vec3 upVe
 }
 
 glm::mat4 Camera::getScaleMatrix() {
+	// Note that w / 2 = tan(theta_w / 2) * far [Same with height]
 	glm::mat4 scaleMat4(1.0);
+	scaleMat4[0][0] = 2.0 / getScreenWidth(); 
+	scaleMat4[1][1] = 2.0 / getScreenHeight(); 
+	scaleMat4[2][2] = 1.0 / getFarPlane(); 
 	return scaleMat4;
 }
 
 glm::mat4 Camera::getInverseScaleMatrix() {
+	// Note that w / 2 = tan(theta_w / 2) * far [Same with height]
 	glm::mat4 invScaleMat4(1.0);
+	invScaleMat4[0][0] = getScreenWidth() / 2.0;
+	invScaleMat4[1][1] = getScreenHeight() / 2.0;
+	invScaleMat4[2][2] = getFarPlane();
 	return invScaleMat4;
 }
 
 glm::mat4 Camera::getUnhingeMatrix() {
-	glm::mat4 unhingeMat4(1.0);
+
+	float c = -getNearPlane() / getFarPlane(); 
+
+	/*
+		[ 1 0  0             0             ]
+		[ 0 1  0             0             ]
+		[ 0 0 -(1 / [c + 1]) (c / [c + 1]) ]
+		[ 0 0 -1             0             ]
+	*/
+	glm::mat4 unhingeMat4(1.0f); 
+	unhingeMat4[2][2] = -1 / (1 + c);
+	unhingeMat4[3][2] = c / (1 + c);
+	unhingeMat4[2][3] = -1;
+	unhingeMat4[3][3] = 0;
+	
 	return unhingeMat4;
 }
 
 
 glm::mat4 Camera::getProjectionMatrix() {
-	glm::mat4 projMat4(1.0);
+	glm::mat4 projMat4 = getUnhingeMatrix() * getScaleMatrix();
 	return projMat4;
 }
 
