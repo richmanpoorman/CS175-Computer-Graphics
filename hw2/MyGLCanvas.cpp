@@ -260,13 +260,13 @@ glm::mat4 SceneTransf_to_Matrix(vector<SceneTransformation*> transfs) {
 		// composite_matrix *= t->matrix;
 		switch (t->type) {
 			case TRANSFORMATION_TRANSLATE:
-				composite_matrix = glm::translate(composite_matrix, t->translate);
+				composite_matrix *= glm::translate(composite_matrix, t->translate);
 				break;
 			case TRANSFORMATION_SCALE:
-				composite_matrix = glm::scale(composite_matrix, t->scale);
+				composite_matrix *= glm::scale(composite_matrix, t->scale);
 				break;
 			case TRANSFORMATION_ROTATE:
-				composite_matrix = glm::rotate(composite_matrix, t->angle, t->rotate);
+				composite_matrix *= glm::rotate(composite_matrix, t->angle, t->rotate);
 				break;
 			case TRANSFORMATION_MATRIX:
 				composite_matrix *= t->matrix;
