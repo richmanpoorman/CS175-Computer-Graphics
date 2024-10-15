@@ -1,5 +1,9 @@
 #include "Camera.h"
 
+struct UVWVectors {
+	glm::vec3 u, v, w; 
+};
+
 Camera::Camera() {
 	reset();
 }
@@ -31,6 +35,13 @@ void Camera::setRotUVW(float u, float v, float w) {
 	rotW = w;
 }
 
+
+UVWVectors uvwVectors(glm::vec3 lookVector, glm::vec3 upVector) {
+	glm::vec3 u = -glm::normalize(lookVector);
+	glm::vec3 w = glm::normalize(glm::cross(upVector, u));
+	glm::vec3 v = glm::cross(w, u);
+	return { u, v, w };
+}
 
 void Camera::orientLookAt(glm::vec3 eyePoint, glm::vec3 lookatPoint, glm::vec3 upVec) {
 }
@@ -78,7 +89,21 @@ glm::mat4 Camera::getUnhingeMatrix() {
 
 
 glm::mat4 Camera::getProjectionMatrix() {
-	glm::mat4 projMat4 = getUnhingeMatrix() * getScaleMatrix();
+	//return glm::mat4(1.0f); // TEST EXCLUDE
+	UVWVectors uvw = uvwVectors(getLookVector(), getUpVector());
+	glm::vec3 u = uvw.u, v = uvw.v, w = uvw.w; 
+
+	glm::mat4 rotateMatrix(1.0f);
+	rotateMatrix[0] = glm::vec4(u, 0.0f);
+	rotateMatrix[1] = glm::vec4(v, 0.0f);
+	rotateMatrix[2] = glm::vec4(w, 0.0f);
+	rotateMatrix = glm::transpose(rotateMatrix);
+
+	glm::mat4 translateMatrix(1.0f);
+	glm::vec4 translateVector = glm::vec4(-getEyePoint(), 1.0);
+	translateMatrix[3] = translateVector;
+
+	glm::mat4 projMat4 = getUnhingeMatrix() * getScaleMatrix() * rotateMatrix * translateMatrix;
 	return projMat4;
 }
 
@@ -136,7 +161,7 @@ void Camera::rotate(glm::vec3 point, glm::vec3 axis, float degrees) {
 
 
 glm::vec3 Camera::getEyePoint() {
-	glm::vec3 eyeVec3(0.0f);
+	glm::vec3 eyeVec3(1.0f);
 	return eyeVec3;
 }
 

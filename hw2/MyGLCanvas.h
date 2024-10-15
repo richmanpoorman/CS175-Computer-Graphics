@@ -16,6 +16,7 @@
 #include "Cylinder.h"
 #include "Cone.h"
 #include "Sphere.h"
+#include "Hourglass.h";
 
 #include "Camera.h"
 #include "scene/SceneParser.h"
@@ -42,6 +43,7 @@ public:
 	Cylinder* cylinder;
 	Cone* cone;
 	Sphere* sphere;
+	Hourglass* hourglass;
 	Shape* shape;
 
 	Camera* camera;
