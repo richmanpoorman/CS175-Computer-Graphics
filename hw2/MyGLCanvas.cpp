@@ -252,24 +252,30 @@ Shape *primitiveToShape(ScenePrimitive* primitive) {
 glm::mat4 SceneTransf_to_Matrix(vector<SceneTransformation*> transfs) {
 
 	glm::mat4 composite_matrix = glm::mat4(1.0f);
-
+	
 	/* determine the type of transformation, and apply
 	* it to the cumulative composite transform */
+	//cout << "SHAPE" << endl;
 	for (SceneTransformation* t : transfs) {
 		// cout << glm::to_string(t->matrix) << endl;
 		// composite_matrix *= t->matrix;
+		
 		switch (t->type) {
 			case TRANSFORMATION_TRANSLATE:
 				composite_matrix *= glm::translate(composite_matrix, t->translate);
+				//cout << "Translate" << endl;
 				break;
 			case TRANSFORMATION_SCALE:
 				composite_matrix *= glm::scale(composite_matrix, t->scale);
+				//cout << "Scale" << endl;
 				break;
 			case TRANSFORMATION_ROTATE:
 				composite_matrix *= glm::rotate(composite_matrix, t->angle, t->rotate);
+				//cout << "Rotate" << endl;
 				break;
 			case TRANSFORMATION_MATRIX:
 				composite_matrix *= t->matrix;
+				//cout << "Composite" << endl;
 				break;
 			default:
 				break;
@@ -289,7 +295,7 @@ void flattenTraversal(SceneNode* current, glm::mat4 &transformations, vector<pai
 	vector<SceneNode*> children = current->children; 
 	vector<ScenePrimitive*> primitives = current->primitives;
 	vector<SceneTransformation*> currentTransformations = current->transformations;
-
+	
 	glm::mat4 nodeTransformation = SceneTransf_to_Matrix(currentTransformations);
 	glm::mat4 newMatrix = transformations * nodeTransformation; 
 
@@ -344,6 +350,17 @@ void MyGLCanvas::drawScene() {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		//TODO: draw wireframe of the scene
 
+		for (pair<Shape*, glm::mat4> shapeTransformPair : shapes_to_render) {
+			Shape*    shape          = shapeTransformPair.first; 
+			glm::mat4 transformation = shapeTransformPair.second; 
+			glPushMatrix();
+			glMultMatrixf(glm::value_ptr(transformation));
+			shape->draw();
+			cout << "Shape: " << shape->getType() << endl;
+			glPopMatrix(); 
+	
+		}
+
 		/* attempted this, to no avail */
 		// for (pair<Shape*, glm::mat4> shape : shapes_to_render) {
 		// 	glPushMatrix();
@@ -374,9 +391,18 @@ void MyGLCanvas::drawScene() {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		//TODO: render the scene
 		// note that you should always applyMaterial first before drawing each geometry
-		cout << "Here" << endl;
-		for (pair<Shape*, glm::mat4> shape : shapes_to_render) {
-			shape.first->draw();
+		for (pair<Shape*, glm::mat4> shapeTransformPair : shapes_to_render) {
+			Shape* shape = shapeTransformPair.first;
+			glm::mat4 transformation = shapeTransformPair.second;
+			glPushMatrix();
+
+			glMultMatrixf(glm::value_ptr(transformation));
+			
+			shape->draw();
+			cout << "Shape: " << shape->getType() << endl;
+
+			glPopMatrix();
+
 		}
 	}
 	glDisable(GL_LIGHTING);
