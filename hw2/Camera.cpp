@@ -65,17 +65,30 @@ glm::mat4 Camera::getInverseModelViewMatrix() {
 	return invModelViewMat4;
 }
 
-
+// View Angle is the height
 void Camera::setViewAngle (float _viewAngle) {
+	viewAngle = _viewAngle;
+	float newHeight = 2 * tan(_viewAngle / 2) * getFarPlane(); 
+	float newWidth = newHeight / getScreenWidthRatio();
+
+	screenWidth  = (int)newWidth;
+	screenHeight = (int)newHeight;
 }
 
 void Camera::setNearPlane (float _nearPlane) {
+	nearPlane = _nearPlane;
+	filmPlanDepth = getFarPlane() - nearPlane;
 }
 
 void Camera::setFarPlane (float _farPlane) {
+	farPlane = _farPlane;
+	filmPlanDepth = farPlane - getNearPlane();
 }
 
 void Camera::setScreenSize (int _screenWidth, int _screenHeight) {
+	screenWidth      = _screenWidth; 
+	screenHeight     = _screenHeight; 
+	screenWidthRatio = 1.0f * screenHeight / screenWidth; 
 }
 
 glm::mat4 Camera::getModelViewMatrix() {
