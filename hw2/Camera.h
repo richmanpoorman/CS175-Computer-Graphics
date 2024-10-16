@@ -63,7 +63,8 @@ private:
 	int screenWidth, screenHeight;
 	float screenWidthRatio;
 	glm::vec3 lookVector;
-	glm::vec3 eyeVector; 
+	glm::vec3 eyeVector;
+	glm::vec3 upVector;
 };
 #endif
 

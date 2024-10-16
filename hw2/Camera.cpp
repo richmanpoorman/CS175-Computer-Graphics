@@ -28,6 +28,8 @@ void Camera::reset() {
 	// ADDED LOOK/EYE VECTOR
 	lookVector = glm::vec3(0.0f, 0.0f, -1.0f);
 	eyeVector = glm::vec3(0.0f, 0.0f, 1.0f);
+	// ADDED UP VECTOR
+	upVector = glm::vec3(0.0f, 1.0f, 0.0f);
 }
 
 //called by main.cpp as a part of the slider callback for controlling rotation
@@ -52,11 +54,26 @@ UVWVectors uvwVectors(glm::vec3 lookVector, glm::vec3 upVector) {
 	return { u, v, w };
 }
 
+/* orientLookAt
+* establishes camera orientation
+* (given lookAt point)
+*/
 void Camera::orientLookAt(glm::vec3 eyePoint, glm::vec3 lookatPoint, glm::vec3 upVec) {
+	eyeVector = eyePoint;
+	lookVector = glm::normalize(lookatPoint - eyePoint);
+	glm::vec3 rightVector = glm::normalize(glm::cross(lookVector, upVec));
+	upVector = glm::cross(rightVector, lookVector);
 }
 
-
+/* orientLookVec
+* establishes camer orientaiton
+* (given look vector)
+*/
 void Camera::orientLookVec(glm::vec3 eyePoint, glm::vec3 lookVec, glm::vec3 upVec) {
+	eyeVector = eyePoint;
+	lookVector = lookVec;
+	glm::vec3 rightVector = glm::normalize(glm::cross(lookVector, upVec));
+	upVector = glm::cross(rightVector, lookVector);
 }
 
 glm::mat4 Camera::getScaleMatrix() {
@@ -193,8 +210,7 @@ glm::vec3 Camera::getLookVector() {
 }
 
 glm::vec3 Camera::getUpVector() {
-	glm::vec3 upVec3(0.0f, 1.0f, 0.0f);
-	return upVec3;
+	return upVector; 
 }
 
 float Camera::getViewAngle() {
