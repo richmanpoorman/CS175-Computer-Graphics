@@ -78,6 +78,27 @@ void Camera::orientLookVec(glm::vec3 eyePoint, glm::vec3 lookVec, glm::vec3 upVe
 	upVector = glm::cross(rightVector, lookVector);
 }
 
+glm::mat4 Camera::getRotateMatrix() {
+	UVWVectors uvw = uvwVectors(getLookVector(), getUpVector());
+	glm::vec3 u = uvw.u, v = uvw.v, w = uvw.w;
+
+	glm::mat4 rotateMatrix(1.0f);
+	rotateMatrix[0] = glm::vec4(u, 0.0f);
+	rotateMatrix[1] = glm::vec4(v, 0.0f);
+	rotateMatrix[2] = glm::vec4(w, 0.0f);
+	rotateMatrix = glm::transpose(rotateMatrix);
+
+	return rotateMatrix;
+}
+
+glm::mat4 Camera::getTranslateMatrix() {
+	glm::mat4 translateMatrix(1.0f);
+	glm::vec4 translateVector = glm::vec4(-getEyePoint(), 1.0);
+	translateMatrix[3] = translateVector;
+
+	return translateMatrix;
+}
+
 glm::mat4 Camera::getScaleMatrix() {
 	// Note that w / 2 = tan(theta_w / 2) * far [Same with height]
 	glm::mat4 scaleMat4(1.0);
@@ -117,26 +138,11 @@ glm::mat4 Camera::getUnhingeMatrix() {
 
 
 glm::mat4 Camera::getProjectionMatrix() {
-	//return glm::mat4(1.0f); // TEST EXCLUDE
-	UVWVectors uvw = uvwVectors(getLookVector(), getUpVector());
-	glm::vec3 u = uvw.u, v = uvw.v, w = uvw.w; 
-
-	glm::mat4 rotateMatrix(1.0f);
-	rotateMatrix[0] = glm::vec4(u, 0.0f);
-	rotateMatrix[1] = glm::vec4(v, 0.0f);
-	rotateMatrix[2] = glm::vec4(w, 0.0f);
-	rotateMatrix = glm::transpose(rotateMatrix);
-	
-	glm::mat4 translateMatrix(1.0f);
-	glm::vec4 translateVector = glm::vec4(-getEyePoint(), 1.0);
-	translateMatrix[3] = translateVector;
-
-	glm::mat4 projMat4 = getUnhingeMatrix() * getScaleMatrix() * rotateMatrix * translateMatrix;
+	glm::mat4 projMat4 = getUnhingeMatrix() * getScaleMatrix();
 	return projMat4;
 }
 
 glm::mat4 Camera::getInverseModelViewMatrix() {
-
 	return glm::inverse(getModelViewMatrix());
 }
 
@@ -148,7 +154,6 @@ void Camera::setViewAngle (float _viewAngle) {
 
 	screenWidth  = (int)newWidth;
 	screenHeight = (int)newHeight;
-
 }
 
 void Camera::setNearPlane (float _nearPlane) {
@@ -168,22 +173,8 @@ void Camera::setScreenSize (int _screenWidth, int _screenHeight) {
 }
 
 glm::mat4 Camera::getModelViewMatrix() {
-
-	UVWVectors camBasis = uvwVectors(lookVector, upVector);
-
-    // construct the rotation part
-    glm::mat4 rotation(
-        camBasis.u.x, camBasis.u.y, camBasis.u.z, 0,
-        camBasis.v.x, camBasis.v.y, camBasis.v.z, 0,
-        camBasis.w.x, camBasis.w.y, camBasis.w.z, 0,
-        0, 0, 0, 1
-    );
-
-    // construct the translation part
-    glm::mat4 translation = glm::translate(glm::mat4(1.0f), -eyeVector);
-
-    // combine the rotation and translation
-    return rotation * translation;
+	glm::mat4 modelViewMatrix = getRotateMatrix() * getTranslateMatrix();
+	return modelViewMatrix;
 }
 
 

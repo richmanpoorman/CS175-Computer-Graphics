@@ -31,6 +31,8 @@ public:
 	void setScreenSize(int _screenWidth, int _screenHeight);
 	void setRotUVW(float u, float v, float w);  //called by main.cpp as a part of the slider callback
 
+	glm::mat4 getRotateMatrix();
+	glm::mat4 getTranslateMatrix();
 	glm::mat4 getUnhingeMatrix();
 	glm::mat4 getProjectionMatrix();
 	glm::mat4 getScaleMatrix();
