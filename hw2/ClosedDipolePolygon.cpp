@@ -148,8 +148,8 @@ void connectTopAndBottom(Surface& surface, vector<vector<VertexID>>& verticies, 
 			Vertex copy = surface.vertex(vertexID);
 			glm::vec3 direction = glm::vec3(0.0, 1.0, 0.0);
 			Vertex   newVertex = Vertex(copy.position(), glm::normalize(direction));
-			VertexID vertexID = surface.addVertex(newVertex);
-			newTopRow.push_back(vertexID);
+			VertexID vertID = surface.addVertex(newVertex);
+			newTopRow.push_back(vertID);
 		}
 		topRow = newTopRow;
 	}
@@ -163,8 +163,8 @@ void connectTopAndBottom(Surface& surface, vector<vector<VertexID>>& verticies, 
 			Vertex copy = surface.vertex(vertexID);
 			glm::vec3 direction = glm::vec3(0.0, -1.0, 0.0);
 			Vertex   newVertex = Vertex(copy.position(), glm::normalize(direction));
-			VertexID vertexID = surface.addVertex(newVertex);
-			newBottomRow.push_back(vertexID);
+			VertexID vertID = surface.addVertex(newVertex);
+			newBottomRow.push_back(vertID);
 		}
 		bottomRow = newBottomRow;
 	}
