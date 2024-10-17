@@ -217,12 +217,10 @@ void Camera::rotate(glm::vec3 point, glm::vec3 axis, float degrees) {
 
 
 glm::vec3 Camera::getEyePoint() {
-	//glm::vec3 eyeVec3(0.0f, 0.0f, -1.0f);
 	return eyeVector;
 }
 
 glm::vec3 Camera::getLookVector() {
-	//glm::vec3 lookVec3(0.0f, 0.0f, 1.0f);
 	return lookVector;
 }
 
