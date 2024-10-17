@@ -21,18 +21,17 @@ void Camera::reset() {
 	screenWidthRatio = 1.0f;
 	rotU = rotV = rotW = 0;
 
-	// ADDED LOOK/EYE VECTOR
 	lookVector = glm::vec3(0.0f, 0.0f, -1.0f);
 	eyeVector = glm::vec3(0.0f, 0.0f, 1.0f);
-	// ADDED UP VECTOR
 	upVector = glm::vec3(0.0f, 1.0f, 0.0f);
 
 	setNearPlane(NEAR_PLANE);
 	setFarPlane(FAR_PLANE);
 
-	orientLookAt(eyeVector, lookVector, upVector);
+	orientLookVec(eyeVector, lookVector, upVector);
+
 	setViewAngle(VIEW_ANGLE);
-	cout << viewAngle << endl;
+	// cout << viewAngle << endl;
 }
 
 //called by main.cpp as a part of the slider callback for controlling rotation
@@ -137,18 +136,19 @@ glm::mat4 Camera::getProjectionMatrix() {
 }
 
 glm::mat4 Camera::getInverseModelViewMatrix() {
-	glm::mat4 invModelViewMat4(1.0);
-	return invModelViewMat4;
+
+	return glm::inverse(getModelViewMatrix());
 }
 
 // View Angle is the height
 void Camera::setViewAngle (float _viewAngle) {
 	viewAngle = _viewAngle;
-	float newHeight = 2 * tan((PI * _viewAngle)/ 360) * getFarPlane(); 
+	float newHeight = 2 * tan((PI * viewAngle)/ 360) * getFarPlane(); 
 	float newWidth = newHeight / getScreenWidthRatio();
 
 	screenWidth  = (int)newWidth;
 	screenHeight = (int)newHeight;
+
 }
 
 void Camera::setNearPlane (float _nearPlane) {
@@ -168,8 +168,22 @@ void Camera::setScreenSize (int _screenWidth, int _screenHeight) {
 }
 
 glm::mat4 Camera::getModelViewMatrix() {
-	glm::mat4 modelViewMat4(1.0);
-	return modelViewMat4;
+
+	UVWVectors camBasis = uvwVectors(lookVector, upVector);
+
+    // construct the rotation part
+    glm::mat4 rotation(
+        camBasis.u.x, camBasis.u.y, camBasis.u.z, 0,
+        camBasis.v.x, camBasis.v.y, camBasis.v.z, 0,
+        camBasis.w.x, camBasis.w.y, camBasis.w.z, 0,
+        0, 0, 0, 1
+    );
+
+    // construct the translation part
+    glm::mat4 translation = glm::translate(glm::mat4(1.0f), -eyeVector);
+
+    // combine the rotation and translation
+    return rotation * translation;
 }
 
 
