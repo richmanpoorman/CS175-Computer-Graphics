@@ -141,7 +141,7 @@ glm::mat4 Camera::getInverseModelViewMatrix() {
 // View Angle is the height
 void Camera::setViewAngle (float _viewAngle) {
 	viewAngle = _viewAngle;
-	float newHeight = 2 * tan(_viewAngle / 2) * getFarPlane(); 
+	float newHeight = 2 * tan((PI * _viewAngle)/ 360) * getFarPlane(); 
 	float newWidth = newHeight / getScreenWidthRatio();
 
 	screenWidth  = (int)newWidth;
