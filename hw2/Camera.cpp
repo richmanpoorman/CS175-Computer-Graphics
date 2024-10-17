@@ -185,7 +185,7 @@ void Camera::rotateU(float degrees) {
 void Camera::rotateW(float degrees) {
 	glm::vec3 w = uvwVectors(getLookVector(), getUpVector()).w;
 	glm::mat3 rotationMatrix = glm::rotate(glm::mat4(1.0f), PI * degrees / 180.0f, w);
-	lookVector = rotationMatrix * lookVector;
+	upVector = rotationMatrix * upVector;
 }
 
 void Camera::translate(glm::vec3 v) {
