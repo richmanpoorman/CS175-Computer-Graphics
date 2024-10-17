@@ -17,10 +17,6 @@ Camera::~Camera() {
 }
 
 void Camera::reset() {
-	orientLookAt(glm::vec3(0.0f, 0.0f, DEFAULT_FOCUS_LENGTH), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-	setViewAngle(VIEW_ANGLE);
-	setNearPlane(NEAR_PLANE);
-	setFarPlane(FAR_PLANE);
 	screenWidth = screenHeight = 200;
 	screenWidthRatio = 1.0f;
 	rotU = rotV = rotW = 0;
@@ -30,6 +26,13 @@ void Camera::reset() {
 	eyeVector = glm::vec3(0.0f, 0.0f, 1.0f);
 	// ADDED UP VECTOR
 	upVector = glm::vec3(0.0f, 1.0f, 0.0f);
+
+	setNearPlane(NEAR_PLANE);
+	setFarPlane(FAR_PLANE);
+
+	orientLookAt(eyeVector, lookVector, upVector);
+	setViewAngle(VIEW_ANGLE);
+	cout << viewAngle << endl;
 }
 
 //called by main.cpp as a part of the slider callback for controlling rotation
